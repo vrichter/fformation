@@ -21,8 +21,10 @@ cmake_minimum_required(VERSION 2.8.2)
 project(fformation)
 
 # the projects version number
-set(PROJECT_VERSION_MAJOR 1)
-set(PROJECT_VERSION_MINOR 1)
+set(PROJECT_VERSION_MAJOR 0)
+set(PROJECT_VERSION_MINOR 9)
+set(PROJECT_VERSION_PATCH 0)
+set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 
 # some output
 message(STATUS "")
@@ -52,6 +54,21 @@ IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE "Release")
 ENDIF()
 
+# Offer the user the choice of overriding the installation directories
+set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
+set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
+set(INSTALL_INCLUDE_DIR include CACHE PATH "Installation directory for header files")
+set(INSTALL_CMAKE_DIR "share/${PROJECT_NAME}/" CACHE PATH "Installation directory for CMake files")
+set(INSTALL_DOCUMENTATION_DIR "share/${PROJECT_NAME}/doc" CACHE PATH "Installation directory for CMake files")
+
+# Make relative paths absolute (needed later on)
+foreach(p LIB BIN INCLUDE CMAKE)
+  set(var INSTALL_${p}_DIR)
+  if(NOT IS_ABSOLUTE "${${var}}")
+    set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
+  endif()
+endforeach()
+
 # boost
 find_package(Boost 1.54 COMPONENTS date_time REQUIRED)
 
@@ -64,10 +81,10 @@ if(NOT "${DOXYGEN_BIN}" STREQUAL "DOXYGEN_BIN-NOTFOUND")
     COMMENT "Creating html and tex documentation in doc/"
   )
   install(
-    DIRECTORY ${PROJECT_BINARY_DIR}/doc/html 
-    DESTINATION "share/doc/${PROJECT_NAME}/"
+    DIRECTORY ${PROJECT_BINARY_DIR}/doc/html
+    DESTINATION "${INSTALL_DOCUMENTATION_DIR}/"
     DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_WRITE WORLD_READ WORLD_EXECUTE OWNER_EXECUTE GROUP_EXECUTE
-    FILE_PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_WRITE 
+    FILE_PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_WRITE
  )
 else()
   message(STATUS "  doxygen not found, documentation will not be available")
@@ -93,15 +110,21 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 #create library
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
+set_target_properties(${PROJECT_NAME} PROPERTIES
+  PUBLIC_HEADER "${HEADERS}")
 target_link_libraries(${PROJECT_NAME})
+#install library
 install(TARGETS "${PROJECT_NAME}"
+  EXPORT  ${PROJECT_NAME}Targets
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
+        PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/${PROJECT_NAME}"
         ARCHIVE DESTINATION lib/static
         PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_WRITE
 )
 
 ######  creating executables #####
+set(APPLICATIONS "")
 foreach(APP ${APPS})
   STRING(REGEX REPLACE "/.*/" "" APP ${APP})
   STRING(REGEX REPLACE "[.]cpp" "" APP ${APP})
@@ -121,5 +144,41 @@ foreach(APP ${APPS})
           ARCHIVE DESTINATION lib/static
           PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_WRITE
          )
+  list(APPEND APPLICATIONS "${PROJECT_NAME}-${APP}")
 endforeach(APP)
 
+##### setup cmake config #####
+
+
+# Add all targets to the build-tree export set
+export(TARGETS ${PROJECT_NAME} ${APPLICATIONS}
+  FILE "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake")
+
+## Export the package for use from the build-tree
+## (this registers the build-tree with a global CMake-registry)
+#export(PACKAGE ${PROJECT_NAME})
+
+# Create the Config.cmake and ConfigVersion files
+file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}"
+   "${INSTALL_INCLUDE_DIR}")
+# ... for the build tree
+set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}")
+configure_file(${PROJECT_NAME}Config.cmake.in
+  "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake" @ONLY)
+# ... for the install tree
+set(CONF_INCLUDE_DIRS "\${FFORMATION_CMAKE_DIR}/${REL_INCLUDE_DIR}")
+configure_file(${PROJECT_NAME}Config.cmake.in
+  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PROJECT_NAME}Config.cmake" @ONLY)
+# ... for both
+configure_file(${PROJECT_NAME}ConfigVersion.cmake.in
+  "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake" @ONLY)
+
+# Install the Config.cmake and ConfigVersion.cmake
+install(FILES
+  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PROJECT_NAME}Config.cmake"
+  "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+  DESTINATION "${INSTALL_CMAKE_DIR}" COMPONENT dev)
+
+# Install the export set for use with the install-tree
+install(EXPORT ${PROJECT_NAME}Targets DESTINATION
+  "${INSTALL_CMAKE_DIR}" COMPONENT dev)
