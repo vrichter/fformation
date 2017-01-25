@@ -1,18 +1,18 @@
-# - Config file for the fformation package
+# - Config file for the @PROJECT_NAME@ package
 # It defines the following variables
-#  FFORMATION_INCLUDE_DIRS - include directories for fformation
-#  FFORMATION_LIBRARIES    - libraries to link against
-#  FFORMATION_EXECUTABLE   - the bar executable
+#  @PROJECT_NAME_UPPER@_INCLUDE_DIRS - include directories for @PROJECT_NAME@
+#  @PROJECT_NAME_UPPER@_LIBRARIES    - libraries to link against
+#  @PROJECT_NAME_UPPER@_EXECUTABLE   - the bar executable
 
 # Compute paths
-get_filename_component(FFORMATION_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
-set(FFORMATION_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+get_filename_component(@PROJECT_NAME_UPPER@_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+set(@PROJECT_NAME_UPPER@_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
 
 # Our library dependencies (contains definitions for IMPORTED targets)
-if(NOT TARGET foo AND NOT FFORMATION_BINARY_DIR)
-  include("${FFORMATION_CMAKE_DIR}/@PROJECT_NAME@Targets.cmake")
+if(NOT TARGET foo AND NOT @PROJECT_NAME_UPPER@_BINARY_DIR)
+  include("${@PROJECT_NAME_UPPER@_CMAKE_DIR}/@PROJECT_NAME@Targets.cmake")
 endif()
 
-# These are IMPORTED targets created by fformationTargets.cmake
-set(FFORMATION_LIBRARIES "@PROJECT_NAME@")
-set(FFORMATION_EXECUTABLE "@APPLICATIONS@")
+# These are IMPORTED targets created by @PROJECT_NAME@Targets.cmake
+set(@PROJECT_NAME_UPPER@_LIBRARIES "@PROJECT_NAME@")
+set(@PROJECT_NAME_UPPER@_EXECUTABLE "@APPLICATIONS@")

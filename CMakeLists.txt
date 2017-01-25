@@ -143,8 +143,8 @@ foreach(APP ${APPS})
 endforeach(APP)
 
 ##### setup cmake config #####
-
-
+# Project name in caps
+string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 # Add all targets to the build-tree export set
 export(TARGETS ${PROJECT_NAME} ${APPLICATIONS}
   FILE "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake")
