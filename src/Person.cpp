@@ -22,7 +22,8 @@ using fformation::Person;
 using fformation::Position2D;
 using fformation::Settings;
 
-Position2D Person::calculateTransactionalSegmentPosition(double stride) const {
+Position2D Person::calculateTransactionalSegmentPosition(
+    Position2D::Coordinate stride) const {
   using Coordinate = fformation::Position2D::Coordinate;
   using Rotation = fformation::RotationRadian;
   return Position2D(

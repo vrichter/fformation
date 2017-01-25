@@ -39,12 +39,11 @@ void Group::serializeJson(std::ostream &out) const {
   serializeMapAsVector(out, _persons);
 }
 
-Position2D Group::calculateCenter(const Settings &settings) const {
+Position2D Group::calculateCenter(Position2D::Coordinate stride) const {
   Position2D::Coordinate x = 0.;
   Position2D::Coordinate y = 0.;
   for (auto person : _persons) {
-    Position2D ts =
-        person.second.calculateTransactionalSegmentPosition(settings.stride());
+    Position2D ts = person.second.calculateTransactionalSegmentPosition(stride);
     x += ts.x();
     y += ts.y();
   }

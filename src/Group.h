@@ -29,7 +29,7 @@ class Group : public JsonSerializable {
 public:
   Group(const std::vector<Person> &persons = std::vector<Person>());
 
-  Position2D calculateCenter(const Settings &settings) const;
+  Position2D calculateCenter(Position2D::Coordinate stride) const;
 
   const std::map<PersonId, Person> &persons() const { return _persons; }
 

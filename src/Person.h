@@ -30,7 +30,8 @@ public:
   const PersonId &id() const { return _id; }
   const Pose2D &pose() const { return _pose; }
 
-  Position2D calculateTransactionalSegmentPosition(double stride) const;
+  Position2D
+  calculateTransactionalSegmentPosition(Position2D::Coordinate stride) const;
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"id\": " << _id;
