@@ -19,31 +19,30 @@
 #include "JsonSerializable.h"
 #include "PersonId.h"
 #include "Pose.h"
-#include <boost/optional.hpp>
+#include "Settings.h"
 
 namespace fformation {
 
 class Person : public JsonSerializable {
 public:
-  typedef boost::optional<Pose2D> OptionalPose2D;
-
-  Person(PersonId id, OptionalPose2D pose = OptionalPose2D())
+  Person(PersonId id, Pose2D pose = Pose2D())
       : _id(id), _pose(pose) {}
 
   const PersonId &id() const { return _id; }
-  const OptionalPose2D &pose() const { return _pose; }
+  const Pose2D &pose() const { return _pose; }
+
+
+  Position2D transactionalSegmentPosition(double stride) const;
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"id\": " << _id;
-    if (_pose.is_initialized()) {
-      out << ", \"pose\": " << _pose.get();
-    }
+    out << ", \"pose\": " << _pose;
     out << " }";
   }
 
 private:
   const PersonId _id;
-  const OptionalPose2D _pose;
+  const Pose2D _pose;
 };
 
 } // namespace fformation
