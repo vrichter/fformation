@@ -30,7 +30,9 @@ public:
                   std::vector<Classification>())
       : _classification(classification) {}
 
-  const std::vector<Classification>& classification() const { return _classification; }
+  const std::vector<Classification> &classification() const {
+    return _classification;
+  }
 
   virtual void serializeJson(std::ostream &out) const override {
     serializeIterable(out, _classification);
@@ -40,7 +42,6 @@ public:
 
 private:
   const std::vector<Classification> _classification;
-
 };
 
 } // namespace fformation

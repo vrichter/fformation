@@ -28,9 +28,9 @@ public:
                  const std::vector<Group> &groups = std::vector<Group>())
       : _timestamp(timestamp), _groups(groups) {}
 
-  const Timestamp& timestamp() const { return _timestamp; }
+  const Timestamp &timestamp() const { return _timestamp; }
 
-  const std::vector<Group>& groups() const { return _groups; }
+  const std::vector<Group> &groups() const { return _groups; }
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"timestamp\": " << _timestamp << ", \"group\": ";

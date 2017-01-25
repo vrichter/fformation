@@ -29,8 +29,8 @@ public:
          RotationRadian rotation_radian = 0.)
       : _position(position), _rotation_radian(rotation_radian) {}
 
-  const Position2D& position() const { return _position; }
-  const RotationRadian& rotation() const { return _rotation_radian; }
+  const Position2D &position() const { return _position; }
+  const RotationRadian &rotation() const { return _rotation_radian; }
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"position\": ";

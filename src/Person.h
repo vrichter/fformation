@@ -17,8 +17,8 @@
 
 #pragma once
 #include "JsonSerializable.h"
-#include "Pose.h"
 #include "PersonId.h"
+#include "Pose.h"
 #include <boost/optional.hpp>
 
 namespace fformation {

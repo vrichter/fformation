@@ -29,7 +29,9 @@ public:
       : _covariance_matrix(covariance_matrix), _empty(empty), _radius(radius),
         _nsamples(nsamples), _quant(quant) {}
 
-  const std::array<double, 9> covariance_matrix() const { return _covariance_matrix; }
+  const std::array<double, 9> covariance_matrix() const {
+    return _covariance_matrix;
+  }
   const double empty() const { return _empty; }
   const double radius() const { return _radius; }
   const size_t nsamples() const { return _nsamples; }

@@ -30,7 +30,7 @@ public:
       : _observations(observations), _fov(fov) {}
 
   const std::vector<Observation> &observations() const { return _observations; }
-  const FoV& fov() const { return _fov; }
+  const FoV &fov() const { return _fov; }
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"fov\": " << _fov << ", \"observation\": ";
