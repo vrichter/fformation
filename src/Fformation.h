@@ -24,16 +24,13 @@ namespace fformation {
 
 class Fformation {
 public:
-  Fformation(const Observation &observation, const Settings &settings,
-             const SettingsGC &settingsgc)
-      : _settings(settings), _settingsgc(settingsgc),
-        _observation(observation) {}
+  Fformation(const Observation &observation, const Settings &settings)
+      : _settings(settings), _observation(observation) {}
 
   Classification classify();
 
 private:
   Settings _settings;
-  SettingsGC _settingsgc;
   Observation _observation;
 };
 

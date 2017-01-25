@@ -20,7 +20,6 @@
 #include <boost/property_tree/json_parser.hpp>
 
 using fformation::Settings;
-using fformation::SettingsGC;
 using fformation::JsonReader;
 
 namespace fformation {
@@ -43,19 +42,16 @@ Settings JsonReader::createFromTree(const boost::property_tree::ptree &tree) {
       std::next(node.begin(), 3)->second.get_child("..").get_value<size_t>(),
       std::next(node.begin(), 4)->second.get_child("..").get_value<double>());
 }
-
-template <>
-SettingsGC JsonReader::createFromTree(const boost::property_tree::ptree &tree) {
-  assert(tree.size() == 2);
-  return SettingsGC(tree.get_child("mdl...").get_value<double>(),
-                    tree.get_child("stride...").get_value<double>());
-}
 } // namespace fformation
 
-Settings Settings::readMatlabJson(const std::string &filename) {
-  return JsonReader::createFromTree<Settings>(JsonReader::readFile(filename));
-}
-
-SettingsGC SettingsGC::readMatlabJson(const std::string &filename) {
-  return JsonReader::createFromTree<SettingsGC>(JsonReader::readFile(filename));
+Settings Settings::readMatlabJson(const std::string &filename_settings,
+                                 const std::string &filename_settings_gc)
+{
+  auto settings_tree = JsonReader::readFile(filename_settings);
+  auto settings_gc_tree = JsonReader::readFile(filename_settings_gc);
+  Settings result = JsonReader::createFromTree<Settings>(settings_tree);
+  assert(settings_gc_tree.size() == 2);
+  result.mdl(settings_gc_tree.get_child("mdl...").get_value<double>());
+  result.stride(settings_gc_tree.get_child("stride...").get_value<double>());
+  return  result;
 }
