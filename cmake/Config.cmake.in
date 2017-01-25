@@ -10,9 +10,9 @@ set(FFORMATION_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
 
 # Our library dependencies (contains definitions for IMPORTED targets)
 if(NOT TARGET foo AND NOT FFORMATION_BINARY_DIR)
-  include("${FFORMATION_CMAKE_DIR}/fformationTargets.cmake")
+  include("${FFORMATION_CMAKE_DIR}/@PROJECT_NAME@Targets.cmake")
 endif()
 
-# These are IMPORTED targets created by FFormationTargets.cmake
-set(FFORMATION_LIBRARIES ${PROJECT_NAME})
-set(FFORMATION_EXECUTABLE ${APPLICATIONS})
+# These are IMPORTED targets created by fformationTargets.cmake
+set(FFORMATION_LIBRARIES "@PROJECT_NAME@")
+set(FFORMATION_EXECUTABLE "@APPLICATIONS@")
