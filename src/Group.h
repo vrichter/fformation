@@ -29,18 +29,7 @@ class Group : public JsonSerializable {
 public:
   Group(const std::vector<Person> &persons = std::vector<Person>());
 
-  // Position2D calculateCenter(const std::vector<Person> known_persons,
-  //                           const Settings &settings) {
-  //  Position2D center(0., 0.);
-  //  for (auto person : known_persons) {
-  //    if (_person.find(person._id) != _person.end()) {
-  //      Position2D ts = person.transactionalSegment(settings);
-  //      center._x += ts;
-  //    } else {
-  //      throw std::exception()
-  //    }
-  //  }
-  //}
+  Position2D calculateCenter(const Settings &settings) const;
 
   const std::map<PersonId, Person> &persons() const { return _persons; }
 
