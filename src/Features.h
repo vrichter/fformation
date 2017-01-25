@@ -33,7 +33,7 @@ public:
   const FoV &fov() const { return _fov; }
 
   virtual void serializeJson(std::ostream &out) const override {
-    out << "{ \"fov\": " << _fov << ", \"observation\": ";
+    out << "{ \"fov\": " << _fov << ", \"observations\": ";
     serializeIterable(out, _observations);
     out << " }";
   }

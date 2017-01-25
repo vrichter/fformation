@@ -33,7 +33,7 @@ public:
   const Group &group() const { return _group; }
 
   virtual void serializeJson(std::ostream &out) const override {
-    out << "{ \"timestamp\": " << _timestamp << ", \"person\": ";
+    out << "{ \"timestamp\": " << _timestamp << ", \"persons\": ";
     serializeMapAsVector(out, _group.persons());
     out << " }";
   }
