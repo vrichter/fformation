@@ -22,7 +22,7 @@
 #include "Person.h"
 #include <vector>
 
-namespace fformations {
+namespace fformation {
 
 class GroundTruth : public JsonSerializable {
 private:
@@ -40,4 +40,4 @@ public:
   static GroundTruth readMatlabJson(const std::string &filename);
 };
 
-} // namespace fformations
+} // namespace fformation

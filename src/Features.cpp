@@ -18,10 +18,10 @@
 #include "Features.h"
 #include "JsonReader.h"
 
-using fformations::Features;
-using fformations::JsonReader;
+using fformation::Features;
+using fformation::JsonReader;
 
-namespace fformations {
+namespace fformation {
 template <>
 Features JsonReader::createFromTree(const boost::property_tree::ptree &tree) {
   assert(tree.count("features") == 1);

@@ -18,7 +18,7 @@
 #pragma once
 #include "JsonSerializable.h"
 
-namespace fformations {
+namespace fformation {
 
 typedef double PersonIdId;
 
@@ -34,4 +34,4 @@ private:
   const PersonIdType _id;
 };
 
-} // namespace fformations
+} // namespace fformation

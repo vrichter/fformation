@@ -18,7 +18,7 @@
 #pragma once
 #include "JsonSerializable.h"
 
-namespace fformations {
+namespace fformation {
 
 class Timestamp : public JsonSerializable {
 public:
@@ -34,4 +34,4 @@ private:
   const double _timestamp;
 };
 
-} // namespace fformations
+} // namespace fformation

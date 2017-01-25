@@ -19,11 +19,11 @@
 #include "JsonReader.h"
 #include <boost/property_tree/json_parser.hpp>
 
-using fformations::Settings;
-using fformations::SettingsGC;
-using fformations::JsonReader;
+using fformation::Settings;
+using fformation::SettingsGC;
+using fformation::JsonReader;
 
-namespace fformations {
+namespace fformation {
 template <>
 Settings JsonReader::createFromTree(const boost::property_tree::ptree &tree) {
   auto node = tree.get_child("params...");
@@ -50,7 +50,7 @@ SettingsGC JsonReader::createFromTree(const boost::property_tree::ptree &tree) {
   return SettingsGC(tree.get_child("mdl...").get_value<double>(),
                     tree.get_child("stride...").get_value<double>());
 }
-} // namespace fformations
+} // namespace fformation
 
 Settings Settings::readMatlabJson(const std::string &filename) {
   return JsonReader::createFromTree<Settings>(JsonReader::readFile(filename));

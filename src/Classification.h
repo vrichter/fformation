@@ -20,7 +20,7 @@
 #include "JsonSerializable.h"
 #include "Timestamp.h"
 
-namespace fformations {
+namespace fformation {
 
 class Classification : public JsonSerializable {
 private:
@@ -39,4 +39,4 @@ public:
   }
 };
 
-} // namespace fformations
+} // namespace fformation

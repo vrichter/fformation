@@ -19,7 +19,7 @@
 #include "JsonSerializable.h"
 #include "Position.h"
 
-namespace fformations {
+namespace fformation {
 
 typedef double RotationRadian;
 
@@ -40,4 +40,4 @@ public:
   }
 };
 
-} // namespace fformations
+} // namespace fformation

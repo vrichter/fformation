@@ -18,7 +18,7 @@
 #pragma once
 #include <ostream>
 
-namespace fformations {
+namespace fformation {
 
 /**
  * Print-function to ostream printer template.
@@ -30,4 +30,4 @@ auto operator<<(std::ostream &out, const T &data)
   return out;
 }
 
-} // namespace fformations
+} // namespace fformation

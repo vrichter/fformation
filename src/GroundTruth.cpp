@@ -18,10 +18,10 @@
 #include "GroundTruth.h"
 #include "JsonReader.h"
 
-using fformations::GroundTruth;
-using fformations::JsonReader;
+using fformation::GroundTruth;
+using fformation::JsonReader;
 
-namespace fformations {
+namespace fformation {
 
 template <>
 GroundTruth JsonReader::createFromTree<GroundTruth>(

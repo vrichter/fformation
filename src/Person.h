@@ -20,7 +20,7 @@
 #include "Pose.h"
 #include <boost/optional.hpp>
 
-namespace fformations {
+namespace fformation {
 
 typedef std::string PersonId;
 
@@ -47,4 +47,4 @@ private:
   const OptionalPose2D _pose;
 };
 
-} // namespace fformations
+} // namespace fformation

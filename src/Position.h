@@ -19,7 +19,7 @@
 #include "JsonSerializable.h"
 #include <ostream>
 
-namespace fformations {
+namespace fformation {
 
 class Position2D : public JsonSerializable {
 private:
@@ -36,4 +36,4 @@ public:
   }
 };
 
-} // namespace fformations
+} // namespace fformation

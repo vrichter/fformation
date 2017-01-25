@@ -23,7 +23,7 @@
 #include <map>
 #include <vector>
 
-namespace fformations {
+namespace fformation {
 
 class Group : public JsonSerializable {
 public:
@@ -50,4 +50,4 @@ private:
   const std::map<PersonId, Person> _person;
 };
 
-} // namespace fformations
+} // namespace fformation

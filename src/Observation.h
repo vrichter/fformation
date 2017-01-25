@@ -21,7 +21,7 @@
 #include "Timestamp.h"
 #include <vector>
 
-namespace fformations {
+namespace fformation {
 
 class Observation : public JsonSerializable {
 private:
@@ -43,4 +43,4 @@ public:
   }
 };
 
-} // namespace fformations
+} // namespace fformation

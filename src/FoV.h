@@ -17,7 +17,7 @@
 
 #pragma once
 #include "JsonSerializable.h"
-namespace fformations {
+namespace fformation {
 
 // for now i have no idea what that is
 class FoV : public JsonSerializable {
@@ -36,4 +36,4 @@ public:
   }
 };
 
-} // namespace fformations
+} // namespace fformation

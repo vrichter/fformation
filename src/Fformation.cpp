@@ -17,9 +17,9 @@
 
 #include "Fformation.h"
 
-using fformations::Fformation;
-using fformations::Classification;
-using fformations::PersonId;
+using fformation::Fformation;
+using fformation::Classification;
+using fformation::PersonId;
 
 Classification Fformation::classify() {
   std::vector<Group> groups;

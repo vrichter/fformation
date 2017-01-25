@@ -20,7 +20,7 @@
 #include "Observation.h"
 #include "Settings.h"
 
-namespace fformations {
+namespace fformation {
 
 class Fformation {
 
@@ -38,4 +38,4 @@ private:
   Observation _observation;
 };
 
-} // namespace fformations
+} // namespace fformation

@@ -17,9 +17,9 @@
 
 #include "Group.h"
 
-using fformations::Group;
-using fformations::Person;
-using fformations::PersonId;
+using fformation::Group;
+using fformation::Person;
+using fformation::PersonId;
 
 static std::map<PersonId, Person>
 vector_to_map(const std::vector<Person> &person) {

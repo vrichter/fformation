@@ -19,7 +19,7 @@
 #include "JsonSerializable.h"
 #include <array>
 
-namespace fformations {
+namespace fformation {
 
 class Settings : public JsonSerializable {
 private:
@@ -67,4 +67,4 @@ public:
   static SettingsGC readMatlabJson(const std::string &filename);
 };
 
-} // namespace fformations
+} // namespace fformation

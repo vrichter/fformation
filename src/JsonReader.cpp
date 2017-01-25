@@ -19,7 +19,7 @@
 #include "Exception.h"
 #include <boost/property_tree/json_parser.hpp>
 
-using fformations::JsonReader;
+using fformation::JsonReader;
 
 boost::property_tree::ptree JsonReader::readFile(const std::string filename) {
   boost::property_tree::ptree data;

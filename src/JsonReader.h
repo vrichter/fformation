@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-namespace fformations {
+namespace fformation {
 
 class JsonReader {
 public:
@@ -41,4 +41,4 @@ public:
   }
 };
 
-} // namespace fformations
+} // namespace fformation

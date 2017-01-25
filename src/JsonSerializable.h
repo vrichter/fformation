@@ -19,7 +19,7 @@
 #include "OstreamPrinter.h"
 #include <ostream>
 
-namespace fformations {
+namespace fformation {
 
 class JsonSerializable {
 public:
@@ -66,4 +66,4 @@ protected:
   }
 };
 
-} // namespace fformations
+} // namespace fformation

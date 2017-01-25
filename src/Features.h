@@ -20,7 +20,7 @@
 #include "JsonSerializable.h"
 #include "Observation.h"
 
-namespace fformations {
+namespace fformation {
 class Features : public JsonSerializable {
 private:
   const std::vector<Observation> _observations;
@@ -43,4 +43,4 @@ public:
   static Features readMatlabJson(const std::string &filename);
 };
 
-} // namespace fformations
+} // namespace fformation

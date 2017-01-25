@@ -21,12 +21,12 @@
 #include "Settings.h"
 #include <iostream>
 
-using fformations::Features;
-using fformations::GroundTruth;
-using fformations::Settings;
-using fformations::SettingsGC;
-using fformations::Classification;
-using fformations::Fformation;
+using fformation::Features;
+using fformation::GroundTruth;
+using fformation::Settings;
+using fformation::SettingsGC;
+using fformation::Classification;
+using fformation::Fformation;
 
 void print_help(int exit_code) {
   std::cout << "Reads fformation-datasets as json.\n"
