@@ -25,14 +25,12 @@ namespace fformation {
 
 class Person : public JsonSerializable {
 public:
-  Person(PersonId id, Pose2D pose = Pose2D())
-      : _id(id), _pose(pose) {}
+  Person(PersonId id, Pose2D pose = Pose2D()) : _id(id), _pose(pose) {}
 
   const PersonId &id() const { return _id; }
   const Pose2D &pose() const { return _pose; }
 
-
-  Position2D transactionalSegmentPosition(double stride) const;
+  Position2D calculateTransactionalSegmentPosition(double stride) const;
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"id\": " << _id;
