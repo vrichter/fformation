@@ -26,6 +26,8 @@ public:
 
   Timestamp(const TimestampType &timestamp = 0.) : _timestamp(timestamp) {}
 
+  const TimestampType& time() const { return _timestamp; }
+
   virtual void serializeJson(std::ostream &out) const override {
     out << _timestamp;
   }

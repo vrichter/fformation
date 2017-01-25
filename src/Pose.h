@@ -24,20 +24,23 @@ namespace fformation {
 typedef double RotationRadian;
 
 class Pose2D : public JsonSerializable {
-private:
-  const Position2D _position;
-  const RotationRadian _rotation_radian;
-
 public:
   Pose2D(const Position2D &position = Position2D(0., 0.),
          RotationRadian rotation_radian = 0.)
       : _position(position), _rotation_radian(rotation_radian) {}
+
+  const Position2D& position() const { return _position; }
+  const RotationRadian& rotation() const { return _rotation_radian; }
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"position\": ";
     _position.serializeJson(out);
     out << ", \"rotation_radian\": " << _rotation_radian << " }";
   }
+
+private:
+  const Position2D _position;
+  const RotationRadian _rotation_radian;
 };
 
 } // namespace fformation

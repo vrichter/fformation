@@ -22,18 +22,22 @@
 namespace fformation {
 
 class Position2D : public JsonSerializable {
-private:
+public:
+
   typedef double Coordinate;
 
-  const Coordinate _x;
-  const Coordinate _y;
-
-public:
   Position2D(const Coordinate x, const Coordinate y) : _x(x), _y(y) {}
+
+  const Coordinate& x() const { return _x; }
+  const Coordinate& y() const { return _y; }
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"x\": " << _x << ", \"y\": " << _y << " }";
   }
+
+private:
+  const Coordinate _x;
+  const Coordinate _y;
 };
 
 } // namespace fformation

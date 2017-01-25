@@ -22,19 +22,18 @@
 namespace fformation {
 
 class Settings : public JsonSerializable {
-private:
-  const std::array<double, 9> _covariance_matrix;
-  const double _empty;
-  const double _radius;
-  const size_t _nsamples;
-  const double _quant;
-
 public:
   Settings(std::array<double, 9> covariance_matrix = std::array<double, 9>(),
            double empty = 0., double radius = 0., size_t nsamples = 0,
            double quant = 0.)
       : _covariance_matrix(covariance_matrix), _empty(empty), _radius(radius),
         _nsamples(nsamples), _quant(quant) {}
+
+  const std::array<double, 9> covariance_matrix() const { return _covariance_matrix; }
+  const double empty() const { return _empty; }
+  const double radius() const { return _radius; }
+  const size_t nsamples() const { return _nsamples; }
+  const double quant() const { return _quant; }
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"covariance_matrix\": ";
@@ -47,16 +46,22 @@ public:
   }
 
   static Settings readMatlabJson(const std::string &filename);
+
+private:
+  const std::array<double, 9> _covariance_matrix;
+  const double _empty;
+  const double _radius;
+  const size_t _nsamples;
+  const double _quant;
 };
 
 class SettingsGC : public JsonSerializable {
-private:
-  const double _mdl;
-  const double _stride;
-
 public:
   SettingsGC(double mdl = 0., double stride = 0.)
       : _mdl(mdl), _stride(stride) {}
+
+  const double mdl() const { return _mdl; }
+  const double stride() const { return _stride; }
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"mdl\": " << _mdl;
@@ -65,6 +70,10 @@ public:
   }
 
   static SettingsGC readMatlabJson(const std::string &filename);
+
+private:
+  const double _mdl;
+  const double _stride;
 };
 
 } // namespace fformation

@@ -23,7 +23,6 @@
 namespace fformation {
 
 class Fformation {
-
 public:
   Fformation(const Observation &observation, const Settings &settings,
              const SettingsGC &settingsgc)

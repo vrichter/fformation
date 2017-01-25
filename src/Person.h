@@ -18,11 +18,10 @@
 #pragma once
 #include "JsonSerializable.h"
 #include "Pose.h"
+#include "PersonId.h"
 #include <boost/optional.hpp>
 
 namespace fformation {
-
-typedef std::string PersonId;
 
 class Person : public JsonSerializable {
 public:

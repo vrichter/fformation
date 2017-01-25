@@ -40,8 +40,8 @@ GroundTruth JsonReader::createFromTree<GroundTruth>(
             assert(group_node.second.size() == 1);
             std::vector<Person> group;
             for (auto person_node : group_node.second.front().second) {
-              PersonId pid = person_node.second.get_value<PersonId>();
-              group.push_back(Person(pid));
+              PersonId::PersonIdType pid = person_node.second.get_value<PersonId::PersonIdType>();
+              group.push_back(Person(PersonId(pid)));
             }
             classification.push_back(group);
           }

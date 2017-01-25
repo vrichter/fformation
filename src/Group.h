@@ -27,7 +27,7 @@ namespace fformation {
 
 class Group : public JsonSerializable {
 public:
-  Group(const std::vector<Person> &person = std::vector<Person>());
+  Group(const std::vector<Person> &persons = std::vector<Person>());
 
   // Position2D calculateCenter(const std::vector<Person> known_persons,
   //                           const Settings &settings) {
@@ -42,12 +42,12 @@ public:
   //  }
   //}
 
-  const std::map<PersonId, Person> &persons() const { return _person; }
+  const std::map<PersonId, Person> &persons() const { return _persons; }
 
   virtual void serializeJson(std::ostream &out) const override;
 
 private:
-  const std::map<PersonId, Person> _person;
+  const std::map<PersonId, Person> _persons;
 };
 
 } // namespace fformation

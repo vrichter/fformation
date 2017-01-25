@@ -22,17 +22,17 @@ using fformation::Person;
 using fformation::PersonId;
 
 static std::map<PersonId, Person>
-vector_to_map(const std::vector<Person> &person) {
+vector_to_map(const std::vector<Person> &persons) {
   std::map<PersonId, Person> result;
-  for (auto p : person) {
+  for (auto p : persons) {
     result.insert(std::pair<PersonId, Person>(p.id(), p));
   }
   return result;
 }
 
-Group::Group(const std::vector<Person> &person)
-    : _person(vector_to_map(person)) {}
+Group::Group(const std::vector<Person> &persons)
+    : _persons(vector_to_map(persons)) {}
 
 void Group::serializeJson(std::ostream &out) const {
-  serializeMapAsVector(out, _person);
+  serializeMapAsVector(out, _persons);
 }

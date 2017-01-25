@@ -23,20 +23,24 @@
 namespace fformation {
 
 class Classification : public JsonSerializable {
-private:
-  Timestamp _timestamp;
-  const std::vector<Group> _groups;
-
 public:
   Classification(Timestamp timestamp = Timestamp(),
                  const std::vector<Group> &groups = std::vector<Group>())
       : _timestamp(timestamp), _groups(groups) {}
+
+  const Timestamp& timestamp() const { return _timestamp; }
+
+  const std::vector<Group>& groups() const { return _groups; }
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"timestamp\": " << _timestamp << ", \"group\": ";
     serializeIterable(out, _groups);
     out << " }";
   }
+
+private:
+  Timestamp _timestamp;
+  const std::vector<Group> _groups;
 };
 
 } // namespace fformation

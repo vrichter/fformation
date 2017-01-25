@@ -21,11 +21,8 @@
 #include "Observation.h"
 
 namespace fformation {
-class Features : public JsonSerializable {
-private:
-  const std::vector<Observation> _observations;
-  const FoV _fov;
 
+class Features : public JsonSerializable {
 public:
   Features(
       const std::vector<Observation> &observations = std::vector<Observation>(),
@@ -33,6 +30,7 @@ public:
       : _observations(observations), _fov(fov) {}
 
   const std::vector<Observation> &observations() const { return _observations; }
+  const FoV& fov() const { return _fov; }
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"fov\": " << _fov << ", \"observation\": ";
@@ -41,6 +39,10 @@ public:
   }
 
   static Features readMatlabJson(const std::string &filename);
+
+private:
+  const std::vector<Observation> _observations;
+  const FoV _fov;
 };
 
 } // namespace fformation

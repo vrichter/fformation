@@ -21,12 +21,6 @@ namespace fformation {
 
 // for now i have no idea what that is
 class FoV : public JsonSerializable {
-private:
-  const double _a;
-  const double _b;
-  const double _c;
-  const double _d;
-
 public:
   FoV(double a = 0., double b = 0., double c = 0., double d = 0.)
       : _a(a), _b(b), _c(c), _d(d) {}
@@ -34,6 +28,12 @@ public:
   virtual void serializeJson(std::ostream &out) const override {
     out << "[ " << _a << ", " << _b << ", " << _c << ", " << _d << " ]";
   }
+
+private:
+  const double _a;
+  const double _b;
+  const double _c;
+  const double _d;
 };
 
 } // namespace fformation

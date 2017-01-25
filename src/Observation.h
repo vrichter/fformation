@@ -24,10 +24,6 @@
 namespace fformation {
 
 class Observation : public JsonSerializable {
-private:
-  const Timestamp _timestamp;
-  const Group _group;
-
 public:
   Observation(Timestamp timestamp = 0.,
               const Group &group = std::vector<Person>())
@@ -41,6 +37,10 @@ public:
     serializeMapAsVector(out, _group.persons());
     out << " }";
   }
+
+private:
+  const Timestamp _timestamp;
+  const Group _group;
 };
 
 } // namespace fformation

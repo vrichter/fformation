@@ -20,6 +20,7 @@
 #include <string>
 
 namespace fformation {
+
 class Exception : public std::exception {
 public:
   Exception(const std::string &what) : _what(what) {}
@@ -29,4 +30,5 @@ public:
 private:
   const std::string _what;
 };
+
 } // namespace fformation

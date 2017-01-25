@@ -25,19 +25,22 @@
 namespace fformation {
 
 class GroundTruth : public JsonSerializable {
-private:
-  const std::vector<Classification> _classification;
-
 public:
   GroundTruth(const std::vector<Classification> &classification =
                   std::vector<Classification>())
       : _classification(classification) {}
+
+  const std::vector<Classification>& classification() const { return _classification; }
 
   virtual void serializeJson(std::ostream &out) const override {
     serializeIterable(out, _classification);
   }
 
   static GroundTruth readMatlabJson(const std::string &filename);
+
+private:
+  const std::vector<Classification> _classification;
+
 };
 
 } // namespace fformation
