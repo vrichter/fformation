@@ -45,13 +45,12 @@ Settings JsonReader::createFromTree(const boost::property_tree::ptree &tree) {
 } // namespace fformation
 
 Settings Settings::readMatlabJson(const std::string &filename_settings,
-                                 const std::string &filename_settings_gc)
-{
+                                  const std::string &filename_settings_gc) {
   auto settings_tree = JsonReader::readFile(filename_settings);
   auto settings_gc_tree = JsonReader::readFile(filename_settings_gc);
   Settings result = JsonReader::createFromTree<Settings>(settings_tree);
   assert(settings_gc_tree.size() == 2);
   result.mdl(settings_gc_tree.get_child("mdl...").get_value<double>());
   result.stride(settings_gc_tree.get_child("stride...").get_value<double>());
-  return  result;
+  return result;
 }

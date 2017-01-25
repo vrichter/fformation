@@ -24,7 +24,6 @@
 using fformation::Features;
 using fformation::GroundTruth;
 using fformation::Settings;
-using fformation::SettingsGC;
 using fformation::Classification;
 using fformation::Fformation;
 
@@ -60,11 +59,10 @@ int main(const int argc, const char **args) {
 
   Features features = Features::readMatlabJson(features_path);
   GroundTruth groundtruth = GroundTruth::readMatlabJson(groundtruth_path);
-  Settings settings = Settings::readMatlabJson(settings_path);
-  SettingsGC settingsgc = SettingsGC::readMatlabJson(settingsgc_path);
+  Settings settings = Settings::readMatlabJson(settings_path, settingsgc_path);
 
   for (auto observation : features.observations()) {
-    Fformation ff(observation, settings, settingsgc);
+    Fformation ff(observation, settings);
     compareResult(ff.classify(), groundtruth, settings);
   }
 }
