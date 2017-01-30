@@ -20,54 +20,75 @@
 
 using fformation::GroundTruth;
 using fformation::JsonReader;
+using fformation::Timestamp;
+using fformation::Json;
+using fformation::Exception;
+using fformation::Group;
+using fformation::Person;
+using fformation::PersonId;
 
-namespace fformation {
+static std::vector<Group> readGroups(const Json &js) {
+  std::vector<Group> result;
+  if (js.empty()) { // empty classifications may be null
+    return result;
+  }
+  Exception::check(js.is_array(),
+                   "Array of arrays expected. Got: " + js.dump());
+  for (auto group : js) {
+    Exception::check(group.is_array(), "Array expected. Got: " + group.dump());
+    std::vector<Person> persons;
+    persons.reserve(group.size());
+    for (auto pid : group) {
+      double val = pid.get<double>();
+      std::stringstream str;
+      str << val;
+      persons.push_back(Person(PersonId(str.str())));
+    }
+    result.push_back(Group(persons));
+  }
+  return result;
+}
 
-template <>
-GroundTruth JsonReader::createFromTree<GroundTruth>(
-    const boost::property_tree::ptree &tree) {
-  assert(tree.count("GTgroups") == 1);
-  assert(tree.count("GTtimestamp") == 1);
-  std::vector<std::vector<Group>> classifications;
-  std::vector<Timestamp::TimestampType> timestamps;
-  for (auto node : tree) {
-    if (node.first == "GTgroups") {
-      assert(node.second.size() == 1);
-      for (auto classification_node : node.second.front().second) {
-        for (auto groups_node : classification_node.second) {
-          std::vector<Group> classification;
-          for (auto group_node : groups_node.second) {
-            assert(group_node.second.size() == 1);
-            std::vector<Person> group;
-            for (auto person_node : group_node.second.front().second) {
-              PersonId::PersonIdType pid =
-                  person_node.second.get_value<PersonId::PersonIdType>();
-              group.push_back(Person(PersonId(pid)));
-            }
-            classification.push_back(group);
-          }
-          classifications.push_back(classification);
-        }
-      }
-    } else if (node.first == "GTtimestamp") {
-      timestamps =
-          node_to_vector<Timestamp::TimestampType>(node.second.front().second);
-    } else {
-      assert(false);
+static std::vector<std::vector<Group>> readClassifications(const Json &js) {
+  std::vector<std::vector<Group>> result;
+  auto it = js.find("GTgroups");
+  Exception::check(it != js.end(), "GTgroups not found. Got: " + js.dump());
+  Exception::check(it.value().size(),
+                   "GTgroups must not be empty. Got: " + js.dump());
+  for (auto classification : it.value()) {
+    result.push_back(readGroups(classification));
+  }
+  return result;
+}
+
+static std::vector<Timestamp> readTimestamps(const Json &js) {
+  std::vector<Timestamp> result;
+  auto it = js.find("GTtimestamp");
+  if (it != js.end()) {
+    Exception::check(it.value().is_array(),
+                     "GTtimestamp must be an array. Got: " + js.dump());
+    result.reserve(it.value().size());
+    for (auto ts : it.value()) {
+      result.push_back(Timestamp((Timestamp::TimestampType)ts));
     }
   }
-  assert(classifications.size() == timestamps.size());
-  std::vector<Classification> combined_classifications;
-  combined_classifications.reserve(classifications.size());
-  for (size_t i = 0; i < classifications.size(); ++i) {
-    combined_classifications.push_back(
-        Classification(timestamps[i], classifications[i]));
-  }
-  return GroundTruth(combined_classifications);
-}
+  return result;
 }
 
 GroundTruth GroundTruth::readMatlabJson(const std::string &filename) {
-  return JsonReader::createFromTree<GroundTruth>(
-      JsonReader::readFile(filename));
+  Json js = JsonReader::readFile(filename);
+  std::vector<Timestamp> timestamps = readTimestamps(js);
+  std::vector<std::vector<Group>> groups = readClassifications(js);
+  std::vector<Classification> classifications;
+  Exception::check(groups.size() == timestamps.size(),
+                   "Groups and Timestamps must have the same size.");
+  classifications.reserve(timestamps.size());
+  for (size_t i = 0; i < timestamps.size(); ++i) {
+    classifications.push_back(Classification(timestamps[i], groups[i]));
+  }
+  return GroundTruth(classifications);
+}
+
+void GroundTruth::serializeJson(std::ostream &out) const {
+  serializeIterable(out, _classifications);
 }

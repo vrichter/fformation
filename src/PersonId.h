@@ -20,8 +20,6 @@
 
 namespace fformation {
 
-typedef double PersonIdId;
-
 class PersonId : public JsonSerializable {
 public:
   typedef std::string PersonIdType;

@@ -59,8 +59,7 @@ public:
     out << " }";
   }
 
-  static Settings readMatlabJson(const std::string &filename_settings,
-                                 const std::string &filename_settings_gc);
+  static Settings readMatlabJson(const std::string &filename_settings);
 
 private:
   Matrix3D _covariance_matrix;

@@ -27,6 +27,12 @@ public:
 
   virtual const char *what() const noexcept { return _what.c_str(); }
 
+  static void check(bool not_throw, const std::string &message) {
+    if (!not_throw) {
+      throw Exception(message);
+    }
+  }
+
 private:
   const std::string _what;
 };

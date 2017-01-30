@@ -17,17 +17,17 @@
 
 #include "JsonReader.h"
 #include "Exception.h"
-#include <boost/property_tree/json_parser.hpp>
+#include <fstream>
 
 using fformation::JsonReader;
+using fformation::Json;
 
-boost::property_tree::ptree JsonReader::readFile(const std::string filename) {
-  boost::property_tree::ptree data;
-  try {
-    boost::property_tree::read_json(filename, data);
-  } catch (const boost::property_tree::json_parser_error &e) {
-    throw Exception(std::string("Error while parsing data: ") +
-                    std::string(e.what()));
+Json JsonReader::readFile(const std::string filename) {
+  std::fstream fs;
+  Json result;
+  fs.open(filename.c_str(), std::ios_base::in);
+  if (fs.is_open()) {
+    fs >> result;
   }
-  return data;
+  return result;
 }

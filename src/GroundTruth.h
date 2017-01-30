@@ -34,9 +34,7 @@ public:
     return _classifications;
   }
 
-  virtual void serializeJson(std::ostream &out) const override {
-    serializeIterable(out, _classifications);
-  }
+  virtual void serializeJson(std::ostream &out) const override;
 
   static GroundTruth readMatlabJson(const std::string &filename);
 

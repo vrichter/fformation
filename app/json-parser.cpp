@@ -55,11 +55,10 @@ int main(const int argc, const char **args) {
   std::string features_path = path + "/features.json";
   std::string groundtruth_path = path + "/groundtruth.json";
   std::string settings_path = path + "/settings.json";
-  std::string settingsgc_path = path + "/settings_gc.json";
 
   Features features = Features::readMatlabJson(features_path);
   GroundTruth groundtruth = GroundTruth::readMatlabJson(groundtruth_path);
-  Settings settings = Settings::readMatlabJson(settings_path, settingsgc_path);
+  Settings settings = Settings::readMatlabJson(settings_path);
 
   for (auto observation : features.observations()) {
     Fformation ff(observation, settings);

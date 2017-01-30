@@ -16,57 +16,100 @@
 ********************************************************************/
 
 #include "Features.h"
+#include "Exception.h"
 #include "JsonReader.h"
 
 using fformation::Features;
 using fformation::JsonReader;
+using fformation::FoV;
+using fformation::Json;
+using fformation::Observation;
+using fformation::Group;
+using fformation::Person;
+using fformation::Timestamp;
+using fformation::Exception;
 
-namespace fformation {
-template <>
-Features JsonReader::createFromTree(const boost::property_tree::ptree &tree) {
-  assert(tree.count("features") == 1);
-  assert(tree.count("timestamp") == 1);
-  std::vector<std::vector<Person>> observations;
-  std::vector<double> timestamps;
-  std::array<double, 4> fov{{0., 0., 0., 0.}};
-  for (auto node : tree) {
-    if (node.first == "features") {
-      assert(node.second.size() == 1);
-      for (auto observation : node.second.front().second) {
-        std::vector<Person> persons;
-        for (auto person : observation.second) {
-          assert(person.second.size() == 4);
-          std::stringstream idstream;
-          auto data = node_to_vector<double>(person.second);
-          idstream << data[0];
-          Person p(PersonId(idstream.str()),
-                   Pose2D({data[1], data[2]}, data[3]));
-          persons.push_back(p);
-        }
-        observations.push_back(persons);
-      }
-    } else if (node.first == "timestamp") {
-      timestamps = node_to_vector<double>(node.second.front().second);
-    } else if (node.first == "FoV") {
-      assert(node.second.size() == 1);
-      assert(node.second.front().second.size() == 4);
-      auto data = node_to_vector<double>(node.second.front().second);
-      fov = {{data[0], data[1], data[2], data[3]}};
-    } else {
-      assert(false);
+static FoV readFov(const Json &js) {
+  auto it = js.find("FoV");
+  if (it != js.end()) {
+    return FoV(it.value().at(0), it.value().at(1), it.value().at(2),
+               it.value().at(3));
+  } else {
+    return FoV();
+  }
+}
+
+static Person readPerson(const Json &js) {
+  Exception::check(js.is_array(),
+                   "Person data must be an array. Got: " + js.dump());
+  Exception::check(js.size() == 4,
+                   "Person data must be of size = 4. Got: " + js.dump());
+  std::stringstream id;
+  id << js[0];
+  return Person(id.str(), {{js[1], js[2]}, js[3]});
+}
+
+static Group readGroup(const Json &js) {
+  if (!js.is_array() || js.empty()) {
+    // no information about a group -> empty
+    return Group();
+  }
+  std::vector<Person> persons;
+  if (js.front().is_primitive()) {
+    // only one person
+    persons.push_back(readPerson(js));
+  } else {
+    // array of persons
+    persons.reserve(js.size());
+    for (auto it : js) {
+      persons.push_back(readPerson(it));
     }
   }
-  assert(observations.size() == timestamps.size());
-  std::vector<Observation> combined_observations;
-  combined_observations.reserve(observations.size());
-  for (size_t i = 0; i < observations.size(); ++i) {
-    combined_observations.push_back(
-        Observation(timestamps[i], observations[i]));
-  }
-  return Features(combined_observations, FoV{fov[0], fov[1], fov[2], fov[3]});
+  return Group(persons);
 }
+
+static std::vector<Group> readFeatures(const Json &js) {
+  std::vector<Group> result;
+  auto it = js.find("features");
+  if (it != js.end()) {
+    result.reserve(it.value().size());
+    for (auto i : it.value()) {
+      result.push_back(readGroup(i));
+    }
+  }
+  return result;
+}
+
+static std::vector<Timestamp> readTimestamps(const Json &js) {
+  std::vector<Timestamp> result;
+  auto it = js.find("timestamp");
+  if (it != js.end()) {
+    Exception::check(it.value().is_array(),
+                     "timestamp must be an array. Got: " + js.dump());
+    result.reserve(it.value().size());
+    for (auto ts : it.value()) {
+      result.push_back(Timestamp((Timestamp::TimestampType)ts));
+    }
+  }
+  return result;
 }
 
 Features Features::readMatlabJson(const std::string &filename) {
-  return JsonReader::createFromTree<Features>(JsonReader::readFile(filename));
+  Json js = JsonReader::readFile(filename);
+  std::vector<Timestamp> timestamps = readTimestamps(js);
+  std::vector<Group> features = readFeatures(js);
+  std::vector<Observation> observations;
+  observations.reserve(features.size());
+  Exception::check(timestamps.size() == features.size(),
+                   "Timestamps and Features must have the same size.");
+  for (size_t i = 0; i < features.size(); ++i) {
+    observations.push_back(Observation(timestamps[i], features[i]));
+  }
+  return Features(observations, readFov(js));
+}
+
+void Features::serializeJson(std::ostream &out) const {
+  out << "{ \"fov\": " << _fov << ", \"observations\": ";
+  serializeIterable(out, _observations);
+  out << " }";
 }

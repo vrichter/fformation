@@ -32,11 +32,7 @@ public:
   const std::vector<Observation> &observations() const { return _observations; }
   const FoV &fov() const { return _fov; }
 
-  virtual void serializeJson(std::ostream &out) const override {
-    out << "{ \"fov\": " << _fov << ", \"observations\": ";
-    serializeIterable(out, _observations);
-    out << " }";
-  }
+  virtual void serializeJson(std::ostream &out) const override;
 
   static Features readMatlabJson(const std::string &filename);
 

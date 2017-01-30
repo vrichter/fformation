@@ -17,40 +17,33 @@
 
 #include "Settings.h"
 #include "JsonReader.h"
-#include <boost/property_tree/json_parser.hpp>
 
 using fformation::Settings;
 using fformation::JsonReader;
+using fformation::Json;
+using fformation::Exception;
 
-namespace fformation {
-template <>
-Settings JsonReader::createFromTree(const boost::property_tree::ptree &tree) {
-  auto node = tree.get_child("params...");
-  assert(node.size() == 5);
-  std::array<double, 9> cov;
-  size_t cov_pos = 0;
-  auto cov_row = node.begin()->second.begin();
-  for (auto row : node.begin()->second) {
-    for (auto element : row.second) {
-      cov.at(cov_pos++) = element.second.get_value<double>();
+Settings::Matrix3D readMatrix(const Json &js) {
+  auto value = js.at("params").at("covmat");
+  Exception::check(value.is_array(),
+                   "Expected array of arrays. Got: " + value.dump());
+  Exception::check(value.size() == 3,
+                   "Expected size = 3. Got: " + value.dump());
+  Settings::Matrix3D result;
+  size_t matrix_position = 0;
+  for (auto row : value) {
+    Exception::check(row.is_array(), "Expected array. Got: " + row.dump());
+    Exception::check(row.size() == 3, "Expected size = 3. Got: " + row.dump());
+    for (auto column : row) {
+      result[matrix_position++] = column;
     }
   }
-  return Settings(
-      cov,
-      std::next(node.begin(), 1)->second.get_child("..").get_value<double>(),
-      std::next(node.begin(), 2)->second.get_child("..").get_value<double>(),
-      std::next(node.begin(), 3)->second.get_child("..").get_value<size_t>(),
-      std::next(node.begin(), 4)->second.get_child("..").get_value<double>());
-}
-} // namespace fformation
-
-Settings Settings::readMatlabJson(const std::string &filename_settings,
-                                  const std::string &filename_settings_gc) {
-  auto settings_tree = JsonReader::readFile(filename_settings);
-  auto settings_gc_tree = JsonReader::readFile(filename_settings_gc);
-  Settings result = JsonReader::createFromTree<Settings>(settings_tree);
-  assert(settings_gc_tree.size() == 2);
-  result.mdl(settings_gc_tree.get_child("mdl...").get_value<double>());
-  result.stride(settings_gc_tree.get_child("stride...").get_value<double>());
   return result;
+}
+
+Settings Settings::readMatlabJson(const std::string &filename) {
+  Json js = JsonReader::readFile(filename);
+  return Settings(readMatrix(js), js.at("params").at("empty"),
+                  js.at("params").at("radius"), js.at("params").at("nsamples"),
+                  js.at("params").at("quant"), js.at("mdl"), js.at("stride"));
 }

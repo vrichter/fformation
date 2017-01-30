@@ -16,29 +16,23 @@
 ********************************************************************/
 
 #pragma once
-#include <boost/property_tree/ptree.hpp>
+#include "Exception.h"
+#include "dep/json.hpp"
+#include <map>
 #include <string>
 #include <vector>
 
+// Forward declaration of the used json type.
 namespace fformation {
+
+typedef nlohmann::json Json;
 
 class JsonReader {
 public:
-  static boost::property_tree::ptree readFile(const std::string filename);
+  static Json readFile(const std::string filename);
 
-  template <typename T>
-  static T createFromTree(const boost::property_tree::ptree &tree);
+  template <typename T> static T createFromJson(const Json &json);
 
-  template <typename T>
-  std::vector<T> static node_to_vector(
-      const boost::property_tree::ptree &tree) {
-    std::vector<T> result;
-    result.reserve(tree.size());
-    for (auto node : tree) {
-      result.push_back(node.second.get_value<T>());
-    }
-    return result;
-  }
 };
 
 } // namespace fformation
