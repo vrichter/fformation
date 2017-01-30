@@ -17,6 +17,7 @@
 
 #include "GroundTruth.h"
 #include "JsonReader.h"
+#include <set>
 
 using fformation::GroundTruth;
 using fformation::JsonReader;
@@ -24,11 +25,12 @@ using fformation::Timestamp;
 using fformation::Json;
 using fformation::Exception;
 using fformation::Group;
+using fformation::IdGroup;
 using fformation::Person;
 using fformation::PersonId;
 
-static std::vector<Group> readGroups(const Json &js) {
-  std::vector<Group> result;
+static std::vector<IdGroup> readGroups(const Json &js) {
+  std::vector<IdGroup> result;
   if (js.empty()) { // empty classifications may be null
     return result;
   }
@@ -36,21 +38,20 @@ static std::vector<Group> readGroups(const Json &js) {
                    "Array of arrays expected. Got: " + js.dump());
   for (auto group : js) {
     Exception::check(group.is_array(), "Array expected. Got: " + group.dump());
-    std::vector<Person> persons;
-    persons.reserve(group.size());
+    std::set<PersonId> persons;
     for (auto pid : group) {
       double val = pid.get<double>();
       std::stringstream str;
       str << val;
-      persons.push_back(Person(PersonId(str.str())));
+      persons.insert(PersonId(str.str()));
     }
-    result.push_back(Group(persons));
+    result.push_back(persons);
   }
   return result;
 }
 
-static std::vector<std::vector<Group>> readClassifications(const Json &js) {
-  std::vector<std::vector<Group>> result;
+static std::vector<std::vector<IdGroup>> readClassifications(const Json &js) {
+  std::vector<std::vector<IdGroup>> result;
   auto it = js.find("GTgroups");
   Exception::check(it != js.end(), "GTgroups not found. Got: " + js.dump());
   Exception::check(it.value().size(),
@@ -78,7 +79,7 @@ static std::vector<Timestamp> readTimestamps(const Json &js) {
 GroundTruth GroundTruth::readMatlabJson(const std::string &filename) {
   Json js = JsonReader::readFile(filename);
   std::vector<Timestamp> timestamps = readTimestamps(js);
-  std::vector<std::vector<Group>> groups = readClassifications(js);
+  std::vector<std::vector<IdGroup>> groups = readClassifications(js);
   std::vector<Classification> classifications;
   Exception::check(groups.size() == timestamps.size(),
                    "Groups and Timestamps must have the same size.");

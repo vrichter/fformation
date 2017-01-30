@@ -22,9 +22,9 @@ using fformation::Classification;
 using fformation::PersonId;
 
 Classification Fformation::classify() {
-  std::vector<Group> groups;
+  std::vector<IdGroup> groups;
   for (auto person : _observation.group().persons()) {
-    groups.push_back(Group({Person(person.second.id())}));
+    groups.push_back(IdGroup({person.second.id()}));
   }
-  return Classification(_observation.timestamp(), std::vector<Group>({groups}));
+  return Classification(_observation.timestamp(), std::vector<IdGroup>({groups}));
 }

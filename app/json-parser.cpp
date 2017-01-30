@@ -60,6 +60,8 @@ int main(const int argc, const char **args) {
   GroundTruth groundtruth = GroundTruth::readMatlabJson(groundtruth_path);
   Settings settings = Settings::readMatlabJson(settings_path);
 
+  std::cout << groundtruth << std::endl;
+
   for (auto observation : features.observations()) {
     Fformation ff(observation, settings);
     compareResult(ff.classify(), groundtruth, settings);

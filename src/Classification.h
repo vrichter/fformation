@@ -19,18 +19,33 @@
 #include "Group.h"
 #include "JsonSerializable.h"
 #include "Timestamp.h"
+#include <set>
 
 namespace fformation {
+
+class IdGroup : public JsonSerializable {
+public:
+  IdGroup(const std::set<PersonId> &persons): _persons(persons) {};
+
+  const std::set<PersonId>& persons() const { return _persons; }
+
+  virtual void serializeJson(std::ostream &out) const override {
+    serializeIterable(out, _persons);
+  }
+
+private:
+  const std::set<PersonId> _persons;
+};
 
 class Classification : public JsonSerializable {
 public:
   Classification(Timestamp timestamp = Timestamp(),
-                 const std::vector<Group> &groups = std::vector<Group>())
+                 const std::vector<IdGroup> &groups = std::vector<IdGroup>())
       : _timestamp(timestamp), _groups(groups) {}
 
   const Timestamp &timestamp() const { return _timestamp; }
 
-  const std::vector<Group> &groups() const { return _groups; }
+  const std::vector<IdGroup> &groups() const { return _groups; }
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"timestamp\": " << _timestamp << ", \"groups\": ";
@@ -40,7 +55,7 @@ public:
 
 private:
   Timestamp _timestamp;
-  const std::vector<Group> _groups;
+  const std::vector<IdGroup> _groups;
 };
 
 } // namespace fformation
