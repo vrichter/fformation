@@ -25,7 +25,7 @@ namespace fformation {
 
 class Person : public JsonSerializable {
 public:
-  Person(PersonId id, Pose2D pose = Pose2D()) : _id(id), _pose(pose) {}
+  Person(PersonId id, Pose2D pose) : _id(id), _pose(pose) {}
 
   const PersonId &id() const { return _id; }
   const Pose2D &pose() const { return _pose; }
