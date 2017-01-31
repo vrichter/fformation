@@ -19,6 +19,7 @@
 #include "Group.h"
 #include "JsonSerializable.h"
 #include "Timestamp.h"
+#include "Observation.h"
 
 namespace fformation {
 
@@ -31,6 +32,29 @@ public:
   const Timestamp &timestamp() const { return _timestamp; }
 
   const std::vector<IdGroup> &idGroups() const { return _groups; }
+
+  std::vector<Group> createGroups(const Observation &observation) const;
+
+  /**
+   * @brief calculateDistanceCosts the sum of distance costs of the contained groups.
+   * @param observation the observation this classification is derived from. Needed for person information.
+   * @param stride the distance btw. a person and its transactional segment.
+   * @return sum costs. 0 if empty. 0 if all groups of size 1.
+   */
+  double calculateDistanceCosts(const Observation &observation, Position2D::Coordinate stride) const;
+
+  /**
+   * @brief calculateMDLCosts calculates the minimum description length cost.
+   *
+   * These costs are needed to penalize groups of size 1 which otherwise would be
+   * optimal (zero costs). MDL-Costs are mdl_prior * | groups |
+   *
+   * @param mdl_prior called sigma^2 in the paper. This is the sigma^2 of the normal
+   *        probability distribution describing the position of a persons transactional
+   *        segment.
+   * @return mdl_prior * | groups |
+   */
+  double calculateMDLCosts(double mdl_prior) const;
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"timestamp\": " << _timestamp << ", \"groups\": ";

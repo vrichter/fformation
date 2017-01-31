@@ -16,3 +16,29 @@
 ********************************************************************/
 
 #include "Classification.h"
+
+using fformation::Classification;
+using fformation::Group;
+using fformation::Observation;
+
+std::vector<Group> Classification::createGroups(const Observation &observation) const {
+  std::vector<Group> result;
+  result.reserve(_groups.size());
+  for(auto group : _groups){
+    result.push_back(Group(observation.group().find_persons(group.persons())));
+  }
+  return result;
+}
+
+double Classification::calculateDistanceCosts(const Observation &observation, Position2D::Coordinate stride) const {
+  double cost = 0.;
+  for (auto group : createGroups(observation)){
+    cost += group.calculateDistanceCosts(stride);
+  }
+  return cost;
+}
+
+
+double Classification::calculateMDLCosts(double mdl_prior) const {
+  return mdl_prior * (double) _groups.size();
+}
