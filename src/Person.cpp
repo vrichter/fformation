@@ -24,8 +24,6 @@ using fformation::Settings;
 
 Position2D Person::calculateTransactionalSegmentPosition(
     Position2D::Coordinate stride) const {
-  using Coordinate = fformation::Position2D::Coordinate;
-  using Rotation = fformation::RotationRadian;
   return Position2D(
       _pose.position().x() + (stride * std::cos(_pose.rotation())),
       _pose.position().y() + (stride * std::sin(_pose.rotation())));
