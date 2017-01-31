@@ -20,32 +20,42 @@
 #include "GroundTruth.h"
 #include "Settings.h"
 #include <iostream>
+#include <string>
+#include <cmath>
+#include <cstring>
 
+using fformation::Settings;
 using fformation::Features;
 using fformation::GroundTruth;
-using fformation::Settings;
-using fformation::Classification;
 using fformation::Fformation;
+using fformation::Classification;
+using fformation::Position2D;
+using fformation::Observation;
+using fformation::Group;
 
 void print_help(int exit_code) {
   std::cout << "Reads fformation-datasets as json.\n"
-            << "  call: parser <path_to_dataset>" << std::endl;
+            << "  call: parser <path>" << std::endl;
   exit(exit_code);
 }
 
-void compareResult(const Classification &c, const GroundTruth &g,
-                   const Settings &s) {
-  return;
+void compareResult(const Observation &o, const Classification &c,
+                   const GroundTruth &g, const Settings &s) {
+  std::cout << "Classification resulted in:\n"
+            << c << "\ncosts are: "
+            << c.calculateDistanceCosts(o,s.stride()) + c.calculateMDLCosts(s.mdl())
+            << std::endl;
 }
 
 int main(const int argc, const char **args) {
 
-  if (argc < 2) {
+  if (argc != 2) {
     std::cerr << "Not enough parameters passed." << std::endl;
     print_help(-1);
   } else {
-    for (int i = 1; i < argc; ++i) {
-      if (args[i] == std::string("-h") || args[i] == std::string("--help")) {
+    for (int i = 0; i < argc; ++i) {
+      if (std::strcmp(args[i], "-h") == 0 ||
+          std::strcmp(args[i], "--help") == 0) {
         print_help(0);
       }
     }
@@ -60,10 +70,8 @@ int main(const int argc, const char **args) {
   GroundTruth groundtruth = GroundTruth::readMatlabJson(groundtruth_path);
   Settings settings = Settings::readMatlabJson(settings_path);
 
-  std::cout << groundtruth << std::endl;
-
   for (auto observation : features.observations()) {
     Fformation ff(observation, settings);
-    compareResult(ff.classify(), groundtruth, settings);
+    compareResult(observation, ff.classify(), groundtruth, settings);
   }
 }
