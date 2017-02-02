@@ -17,9 +17,9 @@
 
 #include "Group.h"
 #include "Exception.h"
-#include <sstream>
-#include <cstring>
 #include <cmath>
+#include <cstring>
+#include <sstream>
 
 using fformation::Group;
 using fformation::Person;
@@ -40,14 +40,13 @@ vector_to_map(const std::vector<Person> &persons) {
 Group::Group(const std::vector<Person> &persons)
     : _persons(vector_to_map(persons)) {}
 
-Group::Group(const std::map<PersonId,Person> &persons)
-    : _persons(persons) {}
+Group::Group(const std::map<PersonId, Person> &persons) : _persons(persons) {}
 
 void Group::serializeJson(std::ostream &out) const {
   serializeMapAsVector(out, _persons);
 }
 
-Position2D Group::calculateCenter(Position2D::Coordinate stride) const {
+Position2D Group::calculateCenter(Person::Stride stride) const {
   Position2D::Coordinate x = 0.;
   Position2D::Coordinate y = 0.;
   for (auto person : _persons) {
@@ -58,26 +57,29 @@ Position2D Group::calculateCenter(Position2D::Coordinate stride) const {
   return Position2D(x / _persons.size(), y / _persons.size());
 }
 
-std::map<PersonId, Person> Group::find_persons(std::set<PersonId> person_ids) const {
-  std::map<PersonId,Person> result;
-  for(auto id : person_ids){
+std::map<PersonId, Person>
+Group::find_persons(std::set<PersonId> person_ids) const {
+  std::map<PersonId, Person> result;
+  for (auto id : person_ids) {
     auto it = _persons.find(id);
-    if(it == _persons.end()){
+    if (it == _persons.end()) {
       std::stringstream str;
       str << "Person with id" << id << " could not be found";
       throw Exception(str.str());
     }
-    result.insert( {id, _persons.find(id)->second } );
+    result.insert({id, _persons.find(id)->second});
   }
   return result;
 }
 
-double Group::calculateDistanceCosts(Position2D::Coordinate stride) const {
-  if(_persons.size() < 2) return 0.; // empty groups and groups of 1 person have zero costs.
+double Group::calculateDistanceCosts(Person::Stride stride) const {
+  if (_persons.size() < 2)
+    return 0.; // empty groups and groups of 1 person have zero costs.
   double cost = 0.;
   Position2D group_center = calculateCenter(stride);
   for (auto group_entry : _persons) {
-    Position2D person_ts = group_entry.second.calculateTransactionalSegmentPosition(stride);
+    Position2D person_ts =
+        group_entry.second.calculateTransactionalSegmentPosition(stride);
     // square distance between the group center and the persons
     // transactional segments centre
     cost += std::pow(group_center.x() - person_ts.x(), 2) +

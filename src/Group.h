@@ -28,25 +28,31 @@ namespace fformation {
 
 class Group : public JsonSerializable {
 public:
-  Group(const std::map<PersonId,Person> &persons = std::map<PersonId,Person>());
+  Group(
+      const std::map<PersonId, Person> &persons = std::map<PersonId, Person>());
   Group(const std::vector<Person> &persons);
 
-  Position2D calculateCenter(Position2D::Coordinate stride) const;
+  Position2D calculateCenter(Person::Stride stride) const;
 
   const std::map<PersonId, Person> &persons() const { return _persons; }
 
   std::map<PersonId, Person> find_persons(std::set<PersonId> person_ids) const;
 
   /**
-   * @brief calculateDistanceCosts calculates the squared distance sum of the group.
+   * @brief calculateDistanceCosts calculates the squared distance sum of the
+   * group.
    *
-   * With group center C assumed to be the mean of the transactional segments of group
-   * participants TS_i. The costs are the sum of squared distances btw. C and TS_i.
+   * With group center C assumed to be the mean of the transactional segments of
+   * group
+   * participants TS_i. The costs are the sum of squared distances btw. C and
+   * TS_i.
    *
-   * @param stride the distance btw. a persons Position and its transactinoal segment.
-   * @return squared distance sum, 0 if group is empty. 0 if every person has its own group.
+   * @param stride the distance btw. a persons Position and its transactinoal
+   * segment.
+   * @return squared distance sum, 0 if group is empty. 0 if every person has
+   * its own group.
    */
-  double calculateDistanceCosts(Position2D::Coordinate stride) const;
+  double calculateDistanceCosts(Person::Stride stride) const;
 
   virtual void serializeJson(std::ostream &out) const override;
 
@@ -56,9 +62,9 @@ private:
 
 class IdGroup : public JsonSerializable {
 public:
-  IdGroup(const std::set<PersonId> &persons): _persons(persons) {};
+  IdGroup(const std::set<PersonId> &persons) : _persons(persons){};
 
-  const std::set<PersonId>& persons() const { return _persons; }
+  const std::set<PersonId> &persons() const { return _persons; }
 
   virtual void serializeJson(std::ostream &out) const override {
     serializeIterable(out, _persons);
@@ -67,6 +73,5 @@ public:
 private:
   const std::set<PersonId> _persons;
 };
-
 
 } // namespace fformation
