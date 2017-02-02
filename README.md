@@ -16,20 +16,18 @@ An example application of which I classifies groups and prints the corresponding
 
 ## Thanks 
 
-### Citations
+* The assignment costs calculated in this software are implemented according to:
 
-The assignment costs calculated in this software are implemented according to:
-
-* Setti F, Russell C, Bassetti C, Cristani M (2015) F-Formation Detection: 
-  Individuating Free-Standing Conversational Groups in Images. PLoS ONE 10(5): 
-  e0123783. [doi:10.1371/journal.pone.0123783](http://dx.doi.org/10.1371/journal.pone.0123783)
-
-and the corresponding matlab code in [GCFF](https://github.com/franzsetti/GCFF)
+> Setti F, Russell C, Bassetti C, Cristani M (2015) F-Formation Detection: 
+>  Individuating Free-Standing Conversational Groups in Images. PLoS ONE 10(5): 
+>  e0123783. [doi:10.1371/journal.pone.0123783](http://dx.doi.org/10.1371/journal.pone.0123783)
+>
+> and the corresponding matlab code in [GCFF](https://github.com/franzsetti/GCFF)
 
 ### 3rd party software
 
-[RSB](https://code.cor-lab.de/projects/rsb "Robotics Service Bus")
-[Boost](http://www.boost.org/ "Boost C++ Libraries")
+[RSB](https://code.cor-lab.de/projects/rsb "Robotics Service Bus") will be used in future versions.
+[Boost](http://www.boost.org/ "Boost C++ Libraries") Because it is always useful.
 
 ## Copyright
 
