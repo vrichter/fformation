@@ -1,6 +1,6 @@
 # fformation
 
-Detects social greoups.
+Detects social groups. The group assignment is not implemented yet.
 
 ## How do I get set up? ###
 
@@ -12,9 +12,21 @@ Detects social greoups.
 
 ### fformation-example
 
-An example application of which I do now know what it does yet.
+An example application of which I classifies groups and prints the corresponding costs.
 
-## Thanks / 3rd party software
+## Thanks 
+
+### Citations
+
+The assignment costs calculated in this software are implemented according to:
+
+* Setti F, Russell C, Bassetti C, Cristani M (2015) F-Formation Detection: 
+  Individuating Free-Standing Conversational Groups in Images. PLoS ONE 10(5): 
+  e0123783. [doi:10.1371/journal.pone.0123783](http://dx.doi.org/10.1371/journal.pone.0123783)
+
+and the corresponding matlab code in [GCFF](https://github.com/franzsetti/GCFF)
+
+### 3rd party software
 
 [RSB](https://code.cor-lab.de/projects/rsb "Robotics Service Bus")
 [Boost](http://www.boost.org/ "Boost C++ Libraries")
