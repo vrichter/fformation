@@ -26,5 +26,6 @@ Classification Fformation::classify() {
   for (auto person : _observation.group().persons()) {
     groups.push_back(IdGroup({person.second.id()}));
   }
-  return Classification(_observation.timestamp(), std::vector<IdGroup>({groups}));
+  return Classification(_observation.timestamp(),
+                        std::vector<IdGroup>({groups}));
 }

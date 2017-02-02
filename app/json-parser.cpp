@@ -19,10 +19,10 @@
 #include "Fformation.h"
 #include "GroundTruth.h"
 #include "Settings.h"
-#include <iostream>
-#include <string>
 #include <cmath>
 #include <cstring>
+#include <iostream>
+#include <string>
 
 using fformation::Settings;
 using fformation::Features;
@@ -42,8 +42,10 @@ void print_help(int exit_code) {
 void compareResult(const Observation &o, const Classification &c,
                    const GroundTruth &g, const Settings &s) {
   std::cout << "Classification resulted in:\n"
-            << c << "\ncosts are: "
-            << c.calculateDistanceCosts(o,s.stride()) + c.calculateMDLCosts(s.mdl())
+            << c
+            << "\ndist-costs are: " << c.calculateDistanceCosts(o, s.stride())
+            << "\n mdl-costs are: " << c.calculateMDLCosts(s.mdl())
+            << "\n ocl-costs are: " << c.calculateVisibilityCosts(o, s.stride())
             << std::endl;
 }
 

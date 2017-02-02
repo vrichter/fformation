@@ -32,7 +32,6 @@ public:
   static Json readFile(const std::string filename);
 
   template <typename T> static T createFromJson(const Json &json);
-
 };
 
 } // namespace fformation
