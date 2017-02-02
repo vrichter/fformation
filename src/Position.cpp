@@ -16,3 +16,15 @@
 ********************************************************************/
 
 #include "Position.h"
+#include "cmath"
+#include <algorithm>
+
+using fformation::Position2D;
+
+const Position2D::Coordinate Position2D::dot(const Position2D &other) {
+  return (_x * other._x) + (_y * other._y);
+}
+
+double Position2D::norm() const {
+  return std::sqrt(std::pow(_x, 2) + std::pow(_y, 2));
+}

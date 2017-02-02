@@ -29,9 +29,20 @@ public:
 
   const Coordinate &x() const { return _x; }
   const Coordinate &y() const { return _y; }
+  const Coordinate dot(const Position2D &other);
+
+  double norm() const;
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"x\": " << _x << ", \"y\": " << _y << " }";
+  }
+
+  friend Position2D operator+(const Position2D &a, const Position2D &b) {
+    return Position2D(a.x() + b.x(), a.y() + b.y());
+  }
+
+  friend Position2D operator-(const Position2D &a, const Position2D &b) {
+    return Position2D(a.x() - b.x(), a.y() - b.y());
   }
 
 private:
