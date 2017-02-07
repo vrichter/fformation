@@ -30,13 +30,14 @@ public:
 
   friend bool operator==(const Timestamp &lhs, const Timestamp &rhs) {
     return lhs._timestamp == rhs._timestamp;
-  virtual void serializeJson(std::ostream &out) const override {
-    out << _timestamp;
   }
 
   friend bool operator<(const Timestamp &lhs, const Timestamp &rhs) {
     return lhs._timestamp < rhs._timestamp;
   }
+
+  virtual void serializeJson(std::ostream &out) const override;
+
 private:
   double _timestamp;
 };

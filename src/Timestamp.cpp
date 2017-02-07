@@ -16,3 +16,14 @@
 ********************************************************************/
 
 #include "Timestamp.h"
+#include <limits>
+#include <sstream>
+
+using fformation::Timestamp;
+
+void Timestamp::serializeJson(std::ostream &out) const {
+  std::stringstream s;
+  s.precision(std::numeric_limits<double>::max_digits10);
+  s << std::scientific << _timestamp;
+  out << s.str();
+}
