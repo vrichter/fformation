@@ -50,14 +50,11 @@ public:
    * @brief calculateMDLCosts calculates the minimum description length cost.
    *
    * These costs are needed to penalize groups of size 1 which otherwise would
-   * be
-   * optimal (zero costs). MDL-Costs are mdl_prior * | groups |
+   * be optimal (zero costs). MDL-Costs are mdl_prior * | groups |
    *
    * @param mdl_prior called sigma^2 in the paper. This is the sigma^2 of the
-   * normal
-   *        probability distribution describing the position of a persons
-   * transactional
-   *        segment.
+   *        normal probability distribution describing the position of a persons
+   *        transactional segment.
    * @return mdl_prior * | groups |
    */
   double calculateMDLCosts(double mdl_prior) const;
@@ -76,6 +73,21 @@ public:
    */
   double calculateVisibilityCosts(const Observation &observation,
                                   Person::Stride stride) const;
+
+  /**
+   * @brief calculateCosts calculates the summed costs of the classification.
+   * @param observation must correspond to this classification
+   * @param stride the distance btw. a person and its transactional space
+   * @param mdl_prior sigma^2 of the normal probability distribution of persons
+   *        transactional space
+   * @return
+   */
+  double calculateCosts(const Observation &observation, Person::Stride stride,
+                        double mdl_prior) {
+    return calculateDistanceCosts(observation, stride) +
+           calculateMDLCosts(mdl_prior) +
+           calculateVisibilityCosts(observation, stride);
+  }
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"timestamp\": " << _timestamp << ", \"groups\": ";
