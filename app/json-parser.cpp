@@ -74,6 +74,6 @@ int main(const int argc, const char **args) {
 
   for (auto observation : features.observations()) {
     Fformation ff(observation, settings);
-    compareResult(observation, ff.classify(), groundtruth, settings);
+    compareResult(observation, ff.init(), groundtruth, settings);
   }
 }
