@@ -21,7 +21,7 @@ using fformation::Fformation;
 using fformation::Classification;
 using fformation::PersonId;
 
-Classification Fformation::classify() {
+Classification Fformation::init() {
   std::vector<IdGroup> groups;
   for (auto person : _observation.group().persons()) {
     groups.push_back(IdGroup({person.second.id()}));

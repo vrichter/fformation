@@ -27,7 +27,7 @@ public:
   Fformation(const Observation &observation, const Settings &settings)
       : _settings(settings), _observation(observation) {}
 
-  Classification classify();
+  Classification init();
 
 private:
   Settings _settings;
