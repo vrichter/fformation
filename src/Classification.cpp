@@ -16,10 +16,24 @@
 ********************************************************************/
 
 #include "Classification.h"
+#include <assert.h>
 
 using fformation::Classification;
 using fformation::Group;
 using fformation::Observation;
+using fformation::ConfusionMatrix;
+using fformation::Timestamp;
+using fformation::IdGroup;
+
+Classification::Classification(Timestamp timestamp,
+                               const std::vector<IdGroup> &groups)
+    : _timestamp(timestamp), _groups(groups) {
+  for (auto &group : _groups) {
+    if (group.persons().empty()) {
+      throw Exception("Empty IdGroup in Classifications are forbidden.");
+    }
+  }
+}
 
 std::vector<Group>
 Classification::createGroups(const Observation &observation) const {

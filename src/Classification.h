@@ -25,9 +25,16 @@ namespace fformation {
 
 class Classification : public JsonSerializable {
 public:
+  /**
+   * @brief Classification constructs a classification instance from a timestamp
+   * and a vector of IdGroups.
+   *
+   * @param timestamp the timestamp of the corresponding Observation
+   * @param groups the groups of persons. unordered. The groups must not be
+   * empty.
+   */
   Classification(Timestamp timestamp = Timestamp(),
-                 const std::vector<IdGroup> &groups = std::vector<IdGroup>())
-      : _timestamp(timestamp), _groups(groups) {}
+                 const std::vector<IdGroup> &groups = std::vector<IdGroup>());
 
   const Timestamp &timestamp() const { return _timestamp; }
 
