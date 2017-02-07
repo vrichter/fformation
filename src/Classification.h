@@ -96,6 +96,21 @@ public:
            calculateVisibilityCosts(observation, stride);
   }
 
+  /**
+   * @brief calculateGroupIntersection calculates how much first intersects with
+   * second.
+   *
+   * The resulting double is the amount of persons assigned to both groups
+   * relative to the size of the bigger group.
+   *
+   * @param first
+   * @param second
+   * @return result btw. 0 = no overlap and 1 = full overlap.
+   *                if any group is empty the result is 0.
+   *                otherwise \f$ | intersection | / max(|first|,|second|)\f$
+   */
+  static double calculateGroupIntersection(const IdGroup &first,
+                                           const IdGroup &second);
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"timestamp\": " << _timestamp << ", \"groups\": ";
     serializeIterable(out, _groups);

@@ -74,3 +74,20 @@ double Classification::calculateVisibilityCosts(const Observation &observation,
   }
   return cost;
 }
+double Classification::calculateGroupIntersection(const IdGroup &first,
+                                                  const IdGroup &second) {
+  if (first.persons().empty() || second.persons().empty())
+    return 0.;
+  size_t cardinality = (first.persons().size() > second.persons().size())
+                           ? first.persons().size()
+                           : second.persons().size();
+  size_t intersection = 0;
+  for (auto person : first.persons()) {
+    if (second.persons().find(person) != second.persons().end()) {
+      ++intersection;
+    }
+  }
+  if(intersection == 0) return 0.;
+  if(intersection == cardinality) return 1.;
+  return double(intersection) / double(cardinality);
+}
