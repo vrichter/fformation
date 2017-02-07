@@ -39,18 +39,13 @@ public:
   std::map<PersonId, Person> find_persons(std::set<PersonId> person_ids) const;
 
   /**
-   * @brief calculateDistanceCosts calculates the squared distance sum of the
-   * group.
+   * @brief calculateDistanceCosts calculates the sum of the individual distance
+   * costs of group members.
    *
-   * With group center C assumed to be the mean of the transactional segments of
-   * group
-   * participants TS_i. The costs are the sum of squared distances btw. C and
-   * TS_i.
-   *
-   * @param stride the distance btw. a persons Position and its transactinoal
+   * @param stride the distance btw. a persons Position and its transactional
    * segment.
-   * @return squared distance sum, 0 if group is empty. 0 if every person has
-   * its own group.
+   * @return sum of persons costs relative to the probable center of this group,
+   *         0 if group is empty or only one person in group.
    */
   double calculateDistanceCosts(Person::Stride stride) const;
 

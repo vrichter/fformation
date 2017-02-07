@@ -54,6 +54,22 @@ public:
   }
 
   /**
+   * @brief calculateDistanceCosts calculates squared distance btw. this and the
+   * passed group_center.
+   *
+   * With group center C assumed to be the center of a group. The costs are
+   * the squared distances btw. C and the position p of this
+   * \f$cost = (C-p)^2\f$
+   *
+   * @param group_center the central position of a proposed group
+   * @param stride the distance btw. a persons Position and its transactinoal
+   * segment.
+   * @return (group_center - this.pose.position)^2
+   */
+  double calculateDistanceCosts(const Position2D &group_center,
+                                Person::Stride stride) const;
+
+  /**
    * @brief calculateVisibilityCost the visibility-constraint-costs caused by
    * another person.
    *

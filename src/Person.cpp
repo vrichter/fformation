@@ -18,6 +18,7 @@
 #include "Person.h"
 #include "Exception.h"
 #include <cmath>
+#include <iostream>
 
 using fformation::Person;
 using fformation::Position2D;
@@ -28,6 +29,13 @@ Position2D Person::calculateTransactionalSegmentPosition(Stride stride) const {
   return Position2D(
       _pose.position().x() + (stride * std::cos(_pose.rotation())),
       _pose.position().y() + (stride * std::sin(_pose.rotation())));
+}
+
+double Person::calculateDistanceCosts(const Position2D &group_center,
+                                      Person::Stride stride) const {
+  auto ts = calculateTransactionalSegmentPosition(stride);
+  return std::pow(group_center.x() - ts.x(), 2) +
+         std::pow(group_center.y() - ts.y(), 2);
 }
 
 double Person::calculateVisibilityCost(const Position2D &group_center,

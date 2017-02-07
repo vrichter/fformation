@@ -78,12 +78,7 @@ double Group::calculateDistanceCosts(Person::Stride stride) const {
   double cost = 0.;
   Position2D group_center = calculateCenter(stride);
   for (auto group_entry : _persons) {
-    Position2D person_ts =
-        group_entry.second.calculateTransactionalSegmentPosition(stride);
-    // square distance between the group center and the persons
-    // transactional segments centre
-    cost += std::pow(group_center.x() - person_ts.x(), 2) +
-            std::pow(group_center.y() - person_ts.y(), 2);
+    cost += group_entry.second.calculateDistanceCosts(group_center, stride);
   }
   return cost;
 }
