@@ -74,6 +74,45 @@ double Classification::calculateVisibilityCosts(const Observation &observation,
   }
   return cost;
 }
+
+ConfusionMatrix<>
+Classification::createConfusionMatrix(const Classification &ground_truth,
+                                      double threshhold) {
+  ConfusionMatrix<>::IntType true_positive = 0;
+  ConfusionMatrix<>::IntType true_negative = 0;
+  for (auto classified_group : _groups) {
+    if (classified_group.persons().size() == 1) {
+      // not added to a group. validate that person is not in a group in gt
+      bool found = false;
+      for (auto gt_group : ground_truth.idGroups()) {
+        if (gt_group.persons().find(*classified_group.persons().begin()) !=
+            gt_group.persons().end()) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        true_negative += 1;
+      }
+    } else {
+      // find a grop in gt with a high enough intersection.
+      for (auto gt_group : ground_truth.idGroups()) {
+        if (calculateGroupIntersection(classified_group, gt_group) >
+            threshhold) {
+          true_positive += 1;
+          break;
+        }
+      }
+    } // else ignore empty groups
+  }
+  return ConfusionMatrix<>(
+        true_positive,
+        _groups.size() - true_positive,
+        true_negative,
+        ground_truth.idGroups().size() - true_positive
+        );
+}
+
 double Classification::calculateGroupIntersection(const IdGroup &first,
                                                   const IdGroup &second) {
   if (first.persons().empty() || second.persons().empty())

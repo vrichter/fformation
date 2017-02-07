@@ -16,6 +16,8 @@
 ********************************************************************/
 
 #pragma once
+#include "ConfusionMatrix.h"
+#include "Exception.h"
 #include "Group.h"
 #include "JsonSerializable.h"
 #include "Observation.h"
@@ -111,6 +113,22 @@ public:
    */
   static double calculateGroupIntersection(const IdGroup &first,
                                            const IdGroup &second);
+
+  /**
+   * @brief createConfusionMatrix creates a confusion matrix from this
+   * classification and the passed ground_truth.
+   * @param ground_truth the correct classification of the same observation.
+   * @param threshhold how much groups need to intersect for a true-positive
+   * classification @see calculateGroupIntersection
+   * @return A confustion matrix with:
+   *   true-positive = | groups with intersection > threshold |
+   *   false-positive = | ground_truth | - true-positive
+   *   true-negative = | persons in singular groups, not in ground truth |
+   *   false-negative = | this | - true-positive
+   */
+  ConfusionMatrix<> createConfusionMatrix(const Classification &ground_truth,
+                                          double threshhold = 1.);
+
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"timestamp\": " << _timestamp << ", \"groups\": ";
     serializeIterable(out, _groups);
