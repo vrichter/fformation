@@ -30,10 +30,10 @@ public:
   }
 
 private:
-  const double _a;
-  const double _b;
-  const double _c;
-  const double _d;
+  double _a;
+  double _b;
+  double _c;
+  double _d;
 };
 
 } // namespace fformation

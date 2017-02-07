@@ -37,7 +37,7 @@ public:
   virtual void serializeJson(std::ostream &out) const override { out << _id; }
 
 private:
-  const PersonIdType _id;
+  PersonIdType _id;
 };
 
 } // namespace fformation

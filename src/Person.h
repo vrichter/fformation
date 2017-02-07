@@ -97,10 +97,10 @@ public:
   }
 
 private:
-  const PersonId _id;
-  const Pose2D _pose;
-  const double _acos_of_theta = 0.75;
-  const double _ln_of_k = 100;
+  PersonId _id;
+  Pose2D _pose;
+  double _acos_of_theta = 0.75;
+  double _ln_of_k = 100;
 };
 
 } // namespace fformation

@@ -33,7 +33,7 @@ public:
   }
 
 private:
-  const double _timestamp;
+  double _timestamp;
 };
 
 } // namespace fformation

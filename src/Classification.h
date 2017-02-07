@@ -85,7 +85,7 @@ public:
 
 private:
   Timestamp _timestamp;
-  const std::vector<IdGroup> _groups;
+  std::vector<IdGroup> _groups;
 };
 
 } // namespace fformation

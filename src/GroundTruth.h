@@ -39,7 +39,7 @@ public:
   static GroundTruth readMatlabJson(const std::string &filename);
 
 private:
-  const std::vector<Classification> _classifications;
+  std::vector<Classification> _classifications;
 };
 
 } // namespace fformation

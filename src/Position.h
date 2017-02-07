@@ -46,8 +46,8 @@ public:
   }
 
 private:
-  const Coordinate _x;
-  const Coordinate _y;
+  Coordinate _x;
+  Coordinate _y;
 };
 
 } // namespace fformation

@@ -71,7 +71,7 @@ public:
   }
 
 private:
-  const std::set<PersonId> _persons;
+  std::set<PersonId> _persons;
 };
 
 } // namespace fformation

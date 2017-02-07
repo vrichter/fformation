@@ -39,8 +39,8 @@ public:
   }
 
 private:
-  const Timestamp _timestamp;
-  const Group _group;
+  Timestamp _timestamp;
+  Group _group;
 };
 
 } // namespace fformation

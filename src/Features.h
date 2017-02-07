@@ -37,8 +37,8 @@ public:
   static Features readMatlabJson(const std::string &filename);
 
 private:
-  const std::vector<Observation> _observations;
-  const FoV _fov;
+  std::vector<Observation> _observations;
+  FoV _fov;
 };
 
 } // namespace fformation

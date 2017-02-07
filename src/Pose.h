@@ -39,8 +39,8 @@ public:
   }
 
 private:
-  const Position2D _position;
-  const RotationRadian _rotation_radian;
+  Position2D _position;
+  RotationRadian _rotation_radian;
 };
 
 } // namespace fformation
