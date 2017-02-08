@@ -44,13 +44,13 @@ public:
   const IntType &false_negative() const { return _data.at(3); }
   const std::array<IntType,4>& data() const { return _data; }
 
-  RealType calculatePrecision() {
+  RealType calculatePrecision() const {
     return static_cast<RealType>(true_positive()) /
            (static_cast<RealType>(true_positive()) /
             static_cast<RealType>(false_positive()));
   }
 
-  RealType calculateRecall() {
+  RealType calculateRecall() const {
     return static_cast<RealType>(true_positive()) /
            (static_cast<RealType>(true_positive()) /
             static_cast<RealType>(false_negative()));
