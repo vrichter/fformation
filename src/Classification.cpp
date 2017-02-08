@@ -127,7 +127,9 @@ double Classification::calculateGroupIntersection(const IdGroup &first,
       ++intersection;
     }
   }
-  if(intersection == 0) return 0.;
-  if(intersection == cardinality) return 1.;
+  if (intersection == 0)
+    return 0.;
+  if (intersection == cardinality)
+    return 1.;
   return double(intersection) / double(cardinality);
 }
