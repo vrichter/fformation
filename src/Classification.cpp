@@ -77,7 +77,7 @@ double Classification::calculateVisibilityCosts(const Observation &observation,
 
 ConfusionMatrix<>
 Classification::createConfusionMatrix(const Classification &ground_truth,
-                                      double threshhold) {
+                                      double threshhold) const {
   ConfusionMatrix<>::IntType true_positive = 0;
   ConfusionMatrix<>::IntType true_negative = 0;
   for (auto classified_group : _groups) {

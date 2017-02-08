@@ -127,7 +127,7 @@ public:
    *   false-negative = | this | - true-positive
    */
   ConfusionMatrix<> createConfusionMatrix(const Classification &ground_truth,
-                                          double threshhold = 1.);
+                                          double threshhold = 1.) const;
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"timestamp\": " << _timestamp << ", \"groups\": ";
