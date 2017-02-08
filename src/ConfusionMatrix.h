@@ -18,11 +18,13 @@
 #pragma once
 
 #include <array>
+#include <vector>
+#include "JsonSerializable.h"
 
 namespace fformation {
 
 template <typename INTEGER = int, typename REAL = double>
-class ConfusionMatrix {
+class ConfusionMatrix : public JsonSerializable {
 public:
 
   typedef INTEGER IntType;
@@ -52,6 +54,14 @@ public:
     return static_cast<RealType>(true_positive()) /
            (static_cast<RealType>(true_positive()) /
             static_cast<RealType>(false_negative()));
+  }
+
+  virtual void serializeJson(std::ostream &out) const override {
+    out << "{ \"true-positive\": " << true_positive()
+        << ", \"false-positive\": " << false_positive()
+        << ", \"true-negative\": " << true_negative()
+        << ", \"false-negative\": " << false_negative()
+        << " }";
   }
 
 private:
