@@ -17,6 +17,7 @@
 
 #include "Classification.h"
 #include <assert.h>
+#include <limits>
 
 using fformation::Classification;
 using fformation::Group;
@@ -97,8 +98,8 @@ Classification::createConfusionMatrix(const Classification &ground_truth,
     } else {
       // find a grop in gt with a high enough intersection.
       for (auto gt_group : ground_truth.idGroups()) {
-        if (calculateGroupIntersection(classified_group, gt_group) >
-            threshhold) {
+        if (calculateGroupIntersection(classified_group, gt_group) >=
+            (threshhold - std::numeric_limits<double>::epsilon())) {
           true_positive += 1;
           break;
         }
