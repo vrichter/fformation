@@ -26,12 +26,9 @@
 namespace {
 typedef fformation::ConfusionMatrix<> ConfusionMatrix;
 
-static ConfusionMatrix random(){
-  return ConfusionMatrix(
-        (std::rand() + 1),
-        (std::rand() + 1),
-        (std::rand() + 1),
-        (std::rand() + 1));
+static ConfusionMatrix random() {
+  return ConfusionMatrix((std::rand() + 1), (std::rand() + 1),
+                         (std::rand() + 1), (std::rand() + 1));
 }
 
 static size_t mcMatrices() { return 10; }
@@ -49,12 +46,15 @@ TEST(ConfusionMatrixTest, CreateInstance) {
   EXPECT_EQ(cm.false_negative(), fn);
 }
 
-
 TEST(ConfusionMatrixTest, PrecisionRecallCalculation) {
   // general case
   ConfusionMatrix cm = random();
-  EXPECT_FLOAT_EQ(double(cm.true_positive()) / double(cm.true_positive() + cm.false_positive()), cm.calculatePrecision());
-  EXPECT_FLOAT_EQ(double(cm.true_positive()) / double(cm.true_positive() + cm.false_negative()), cm.calculateRecall());
+  EXPECT_FLOAT_EQ(double(cm.true_positive()) /
+                      double(cm.true_positive() + cm.false_positive()),
+                  cm.calculatePrecision());
+  EXPECT_FLOAT_EQ(double(cm.true_positive()) /
+                      double(cm.true_positive() + cm.false_negative()),
+                  cm.calculateRecall());
 
   // edge case 1
   cm = ConfusionMatrix(0, 0, 0, 0);
@@ -75,27 +75,29 @@ TEST(ConfusionMatrixTest, PrecisionRecallCalculation) {
 TEST(ConfusionMatrixTest, MeanCalculationsEquals) {
   std::vector<ConfusionMatrix> equals;
   ConfusionMatrix cm = random();
-  for (size_t i = 0; i < mcMatrices(); ++i){
+  for (size_t i = 0; i < mcMatrices(); ++i) {
     equals.push_back(cm);
   }
-  ASSERT_DOUBLE_EQ(cm.calculatePrecision(),ConfusionMatrix::calculateMeanPrecision(equals));
-  ASSERT_DOUBLE_EQ(cm.calculateRecall(),ConfusionMatrix::calculateMeanRecall(equals));
+  ASSERT_DOUBLE_EQ(cm.calculatePrecision(),
+                   ConfusionMatrix::calculateMeanPrecision(equals));
+  ASSERT_DOUBLE_EQ(cm.calculateRecall(),
+                   ConfusionMatrix::calculateMeanRecall(equals));
 }
 
 TEST(ConfusionMatrixTest, MeanCalculationsDifferent) {
   std::vector<ConfusionMatrix> matrices;
-  for (size_t i = 0; i < mcMatrices(); ++i){
+  for (size_t i = 0; i < mcMatrices(); ++i) {
     matrices.push_back(random());
   }
   double mean_precision = 0.;
   double mean_recall = 0.;
-  for(auto mat : matrices){
+  for (auto mat : matrices) {
     mean_precision += mat.calculatePrecision();
     mean_recall += mat.calculateRecall();
   }
-  ASSERT_DOUBLE_EQ(mean_precision / double(matrices.size()), ConfusionMatrix::calculateMeanPrecision(matrices));
-  ASSERT_DOUBLE_EQ(mean_recall / double(matrices.size()), ConfusionMatrix::calculateMeanRecall(matrices));
+  ASSERT_DOUBLE_EQ(mean_precision / double(matrices.size()),
+                   ConfusionMatrix::calculateMeanPrecision(matrices));
+  ASSERT_DOUBLE_EQ(mean_recall / double(matrices.size()),
+                   ConfusionMatrix::calculateMeanRecall(matrices));
 }
-
-
 }
