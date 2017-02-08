@@ -17,16 +17,15 @@
 
 #pragma once
 
+#include "JsonSerializable.h"
 #include <array>
 #include <vector>
-#include "JsonSerializable.h"
 
 namespace fformation {
 
 template <typename INTEGER = int, typename REAL = double>
 class ConfusionMatrix : public JsonSerializable {
 public:
-
   typedef INTEGER IntType;
   typedef REAL RealType;
 
@@ -36,55 +35,60 @@ public:
                   IntType true_negative, IntType false_negative)
       : _data({true_positive, false_positive, true_negative, false_negative}) {}
 
-  ConfusionMatrix(const std::array<IntType,4> &data) : _data(data) {}
+  ConfusionMatrix(const std::array<IntType, 4> &data) : _data(data) {}
 
   const IntType &true_positive() const { return _data.at(0); }
   const IntType &false_positive() const { return _data.at(1); }
   const IntType &true_negative() const { return _data.at(2); }
   const IntType &false_negative() const { return _data.at(3); }
-  const std::array<IntType,4>& data() const { return _data; }
+  const std::array<IntType, 4> &data() const { return _data; }
 
   RealType calculatePrecision() const {
+    if (true_positive() + false_positive() == 0) {
+      return 1.;
+    }
     return static_cast<RealType>(true_positive()) /
-           (static_cast<RealType>(true_positive()) /
-            static_cast<RealType>(false_positive()));
+           static_cast<RealType>(true_positive() + false_positive());
   }
 
   RealType calculateRecall() const {
+    if (true_positive() + false_negative() == 0) {
+      return 1.;
+    }
     return static_cast<RealType>(true_positive()) /
-           (static_cast<RealType>(true_positive()) /
-            static_cast<RealType>(false_negative()));
+           static_cast<RealType>(true_positive() + false_negative());
   }
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"true-positive\": " << true_positive()
         << ", \"false-positive\": " << false_positive()
         << ", \"true-negative\": " << true_negative()
-        << ", \"false-negative\": " << false_negative()
-        << " }";
+        << ", \"false-negative\": " << false_negative() << " }";
   }
 
-  template<typename Set, typename AccessFunction>
-  static RealType calculateMean(Set set, AccessFunction function){
+  template <typename Set, typename AccessFunction>
+  static RealType calculateMean(Set set, AccessFunction function) {
     RealType result = 0.;
     IntType elements = 0;
-    for(auto elem : set){
+    for (auto elem : set) {
       result += function(elem);
       elements += 1;
     }
     return result / RealType(elements);
   }
 
-  template<typename Set>
-  static RealType calculateMeanPrecision(const Set matrices){
-    return calculateMean(matrices,[] (const ConfusionMatrix& m) { return m.calculatePrecision(); });
+  template <typename Set>
+  static RealType calculateMeanPrecision(const Set matrices) {
+    return calculateMean(matrices, [](const ConfusionMatrix &m) {
+      return m.calculatePrecision();
+    });
   }
 
-  template<typename Set>
-  static RealType calculateMeanRecall(const Set matrices){
-    return calculateMean(matrices,[] (const ConfusionMatrix& m) { return m.calculateRecall(); });
+  template <typename Set>
+  static RealType calculateMeanRecall(const Set matrices) {
+    return calculateMean(
+        matrices, [](const ConfusionMatrix &m) { return m.calculateRecall(); });
   }
-
 
 private:
   /**
