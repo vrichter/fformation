@@ -64,6 +64,28 @@ public:
         << " }";
   }
 
+  template<typename Set, typename AccessFunction>
+  static RealType calculateMean(Set set, AccessFunction function){
+    RealType result = 0.;
+    IntType elements = 0;
+    for(auto elem : set){
+      result += function(elem);
+      elements += 1;
+    }
+    return result / RealType(elements);
+  }
+
+  template<typename Set>
+  static RealType calculateMeanPrecision(const Set matrices){
+    return calculateMean(matrices,[] (const ConfusionMatrix& m) { return m.calculatePrecision(); });
+  }
+
+  template<typename Set>
+  static RealType calculateMeanRecall(const Set matrices){
+    return calculateMean(matrices,[] (const ConfusionMatrix& m) { return m.calculateRecall(); });
+  }
+
+
 private:
   /**
    * @brief _data contains tp,fp,tn,fn
