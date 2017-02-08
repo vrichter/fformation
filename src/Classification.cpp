@@ -106,12 +106,9 @@ Classification::createConfusionMatrix(const Classification &ground_truth,
       }
     } // else ignore empty groups
   }
-  return ConfusionMatrix<>(
-        true_positive,
-        _groups.size() - true_positive,
-        true_negative,
-        ground_truth.idGroups().size() - true_positive
-        );
+  return ConfusionMatrix<>(true_positive, _groups.size() - true_positive,
+                           true_negative,
+                           ground_truth.idGroups().size() - true_positive);
 }
 
 double Classification::calculateGroupIntersection(const IdGroup &first,
