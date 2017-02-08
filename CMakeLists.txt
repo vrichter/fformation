@@ -49,6 +49,8 @@ IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE "Release")
 ENDIF()
 
+option(BUILD_TEST "Build unit tests" ON)
+
 # Offer the user the choice of overriding the installation directories
 set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
 set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
@@ -141,6 +143,14 @@ foreach(APP ${APPS})
          )
   list(APPEND APPLICATIONS "${PROJECT_NAME}-${APP}")
 endforeach(APP)
+
+if(${BUILD_TEST})
+  message(STATUS "Testing turned on. Add -DBUILD_TEST=OFF to build without unit tests.")
+  enable_testing()
+  add_subdirectory(test)
+else()
+  message(STATUS "Testing turned off. Add -DBUILD_TEST=ON to build with unit tests.")
+endif()
 
 ##### setup cmake config #####
 # Project name in caps
