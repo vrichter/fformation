@@ -76,39 +76,74 @@ double Classification::calculateVisibilityCosts(const Observation &observation,
   return cost;
 }
 
-ConfusionMatrix<>
-Classification::createConfusionMatrix(const Classification &ground_truth,
-                                      double threshhold) const {
-  ConfusionMatrix<>::IntType true_positive = 0;
-  ConfusionMatrix<>::IntType true_negative = 0;
-  for (auto classified_group : _groups) {
-    if (classified_group.persons().size() == 1) {
-      // not added to a group. validate that person is not in a group in gt
+static std::vector<IdGroup> fillUpFrom(const std::vector<IdGroup> &fill,
+                                       const std::vector<IdGroup> &from) {
+  auto result = fill;
+  for (auto gt_group : from) {
+    for (auto gt_person : gt_group.persons()) {
       bool found = false;
-      for (auto gt_group : ground_truth.idGroups()) {
-        if (gt_group.persons().find(*classified_group.persons().begin()) !=
-            gt_group.persons().end()) {
+      for (auto group : result) {
+        if (group.persons().find(gt_person) != group.persons().end()) {
           found = true;
           break;
         }
       }
       if (!found) {
-        true_negative += 1;
+        result.push_back(IdGroup({gt_person}));
       }
-    } else {
-      // find a grop in gt with a high enough intersection.
-      for (auto gt_group : ground_truth.idGroups()) {
-        if (calculateGroupIntersection(classified_group, gt_group) >=
-            (threshhold - std::numeric_limits<double>::epsilon())) {
-          true_positive += 1;
+    }
+  }
+  return result;
+}
+
+ConfusionMatrix<>
+Classification::createConfusionMatrix(const Classification &ground_truth,
+                                      double threshhold) const {
+  assert(threshhold >= 0.);
+  assert(threshhold <= 1.);
+  // in case the algothithm does not add non-group persons as on-person groups
+  // we need to collect the missing persons here for the correct results
+  auto cl = fillUpFrom(_groups, ground_truth.idGroups());
+  auto gt = fillUpFrom(ground_truth.idGroups(), _groups);
+
+  // count the various cases
+  ConfusionMatrix<>::IntType true_positive = 0;
+  ConfusionMatrix<>::IntType true_negative = 0;
+  ConfusionMatrix<>::IntType false_negative = 0;
+  ConfusionMatrix<>::IntType false_positive = 0;
+  for (auto classified_group : cl) {
+    if (classified_group.persons().size() == 1) {
+      // not added to a group. validate that person is not in a group in gt
+      for (auto gt_group : gt) {
+        if (gt_group.persons().find(*classified_group.persons().begin()) !=
+            gt_group.persons().end()) {
+          if (gt_group.persons().size() == 1) {
+            true_negative += 1;
+          } else {
+            false_negative += 1;
+          }
           break;
         }
       }
+    } else {
+      // find a grop in gt with a high enough intersection.
+      bool found = false;
+      for (auto gt_group : gt) {
+        if (calculateGroupIntersection(classified_group, gt_group) >=
+            (threshhold - std::numeric_limits<double>::epsilon())) {
+          found = true;
+          break;
+        }
+      }
+      if (found) {
+        true_positive += 1;
+      } else {
+        false_positive += 1;
+      }
     } // else ignore empty groups
   }
-  return ConfusionMatrix<>(true_positive, _groups.size() - true_positive,
-                           true_negative,
-                           ground_truth.idGroups().size() - true_positive);
+  return ConfusionMatrix<>(true_positive, false_positive, true_negative,
+                           false_negative);
 }
 
 double Classification::calculateGroupIntersection(const IdGroup &first,

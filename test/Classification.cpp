@@ -31,12 +31,33 @@ using fformation::PersonId;
 using fformation::Exception;
 typedef fformation::ConfusionMatrix<> ConfusionMatrix;
 
-static IdGroup emptyGroup() { return IdGroup(std::set<PersonId>()); }
-static IdGroup nonEmptyGroup() {
-  return IdGroup({PersonId("one"), PersonId("two"), PersonId("three")});
+static std::set<PersonId> persons(const std::vector<size_t> ids) {
+  std::set<PersonId> result;
+  for (auto id : ids) {
+    std::stringstream str;
+    str << id;
+    result.insert(str.str());
+  }
+  return result;
 }
-static IdGroup nonEmptyGroup2() {
-  return IdGroup({PersonId("four"), PersonId("fife"), PersonId("six")});
+
+static IdGroup group(const std::vector<size_t> &ids) {
+  return IdGroup({persons({ids})});
+}
+
+static Classification ccl(const std::vector<std::vector<size_t>> &data,
+                          fformation::Timestamp timestamp = 0) {
+  std::vector<IdGroup> result;
+  for (auto d : data) {
+    result.push_back(group(d));
+  }
+  return Classification(timestamp, result);
+}
+
+static ConfusionMatrix compare(const Classification &c,
+                               const Classification &gt,
+                               double threshold = 1.) {
+  return c.createConfusionMatrix(gt, threshold);
 }
 
 TEST(ClassificationTest, Classification) {
@@ -54,7 +75,7 @@ TEST(ClassificationTest, Classification) {
   EXPECT_TRUE(c.idGroups().empty());
 
   // constructor with non-empty group list
-  groups.push_back(nonEmptyGroup());
+  groups.push_back(group({1, 2, 3}));
   c = Classification(t, groups);
   EXPECT_EQ(t, c.timestamp());
   EXPECT_EQ(groups.size(), c.idGroups().size());
@@ -67,48 +88,93 @@ TEST(ClassificationTest, Classification) {
     }
   }
   // throw on empty group
-  groups.push_back(emptyGroup());
+  IdGroup empty = group({});
+  groups.push_back(empty);
   EXPECT_THROW(Classification(t, groups), Exception);
 }
 
 TEST(ClassificationTest, confusionMatrix) {
-  Classification empty(0, {});
-  Classification first(0, {nonEmptyGroup()});
-  Classification second(0, {nonEmptyGroup2()});
+  // auto empty = classification({});
+  // auto first = classification({{1,2,3}});
+  // auto first_single = classification({{1},{2},{3}});
+  // auto mixed = classification({{1,2},{3}});
+  // auto second = classification({{4,5,6}});
+  ConfusionMatrix cm;
 
-  // edge case 1
-  ConfusionMatrix cm = empty.createConfusionMatrix(empty);
-  EXPECT_EQ(cm.true_positive(), 0);
-  EXPECT_EQ(cm.true_negative(), 0);
-  EXPECT_EQ(cm.false_positive(), 0);
-  EXPECT_EQ(cm.false_negative(), 0);
+  // edge case 1: empty data
+  cm = compare(ccl({}), ccl({}));
+  EXPECT_EQ(0, cm.true_positive());
+  EXPECT_EQ(0, cm.true_negative());
+  EXPECT_EQ(0, cm.false_positive());
+  EXPECT_EQ(0, cm.false_negative());
 
-  // edge case 2
-  cm = empty.createConfusionMatrix(first);
-  EXPECT_EQ(cm.true_positive(), 0);
-  EXPECT_EQ(cm.true_negative(), 0);
-  EXPECT_EQ(cm.false_positive(), 0);
-  EXPECT_EQ(cm.false_negative(), (int)first.idGroups().size());
+  // edge case 2: no groups found, single persons ignored by classification
+  cm = compare(ccl({}), ccl({{1, 2, 3}}));
+  EXPECT_EQ(0, cm.true_positive());
+  EXPECT_EQ(0, cm.true_negative());
+  EXPECT_EQ(0, cm.false_positive());
+  EXPECT_EQ(3, cm.false_negative());
 
-  // edge case 2
-  cm = first.createConfusionMatrix(empty);
-  EXPECT_EQ(cm.true_positive(), 0);
-  EXPECT_EQ(cm.true_negative(), 0);
-  EXPECT_EQ(cm.false_positive(), (int)first.idGroups().size());
-  EXPECT_EQ(cm.false_negative(), 0);
+  // edge case 2: no groups found, single person not ignored by classification
+  cm = compare(ccl({{1}, {2}, {3}}), ccl({{1, 2, 3}}));
+  EXPECT_EQ(0, cm.true_positive());
+  EXPECT_EQ(0, cm.true_negative());
+  EXPECT_EQ(0, cm.false_positive());
+  EXPECT_EQ(3, cm.false_negative());
 
-  // equal
-  cm = first.createConfusionMatrix(first);
-  EXPECT_EQ(cm.true_positive(), (int)first.idGroups().size());
-  EXPECT_EQ(cm.true_negative(), 0);
-  EXPECT_EQ(cm.false_positive(), 0);
-  EXPECT_EQ(cm.false_negative(), 0);
+  // edge case 3: no groups in ground truth, mixed classification
+  cm = compare(ccl({{1, 2}, {3}}), ccl({}));
+  EXPECT_EQ(0, cm.true_positive());
+  EXPECT_EQ(1, cm.true_negative());
+  EXPECT_EQ(1, cm.false_positive());
+  EXPECT_EQ(0, cm.false_negative());
 
-  // different
-  cm = first.createConfusionMatrix(second);
-  EXPECT_EQ(cm.true_positive(), 0);
-  EXPECT_EQ(cm.true_negative(), 0);
-  EXPECT_EQ(cm.false_positive(), (int)first.idGroups().size());
-  EXPECT_EQ(cm.false_negative(), (int)second.idGroups().size());
+  // correct classification of mixed scene
+  cm = compare(ccl({{1, 2}, {3}}), ccl({{1, 2}, {3}}));
+  EXPECT_EQ(1, cm.true_positive());
+  EXPECT_EQ(1, cm.true_negative());
+  EXPECT_EQ(0, cm.false_positive());
+  EXPECT_EQ(0, cm.false_negative());
+
+  // classification completely different
+  cm = compare(ccl({{1, 2, 3}}), ccl({{4, 5, 6}}));
+  EXPECT_EQ(0, cm.true_positive());
+  EXPECT_EQ(0, cm.true_negative());
+  // one wrong group detected
+  EXPECT_EQ(1, cm.false_positive());
+  // three persons in gt, not in cl -> three negs. false because must be in
+  // group.
+  EXPECT_EQ(3, cm.false_negative());
+
+  // more examples
+  cm = compare(ccl({{1, 2}, {3, 4}, {5}, {6}, {7}}), ccl({{1, 2}, {3, 4}}));
+  EXPECT_EQ(2, cm.true_positive());
+  EXPECT_EQ(3, cm.true_negative());
+  EXPECT_EQ(0, cm.false_positive());
+  EXPECT_EQ(0, cm.false_negative());
+
+  // a mixed example case with threshold 0.6
+  cm = compare(ccl({{1, 2}, {3, 4, 5}, {6, 7}}), ccl({{1, 2}, {3, 4}, {8, 9}}),
+               0.6);
+  EXPECT_EQ(2, cm.true_positive());
+  EXPECT_EQ(0, cm.true_negative());
+  EXPECT_EQ(1, cm.false_positive());
+  EXPECT_EQ(2, cm.false_negative());
+
+  // another mixed case
+  cm = compare(ccl({{1, 10, 2}, {3, 4, 5}, {6}, {7}, {8, 9}}),
+               ccl({{1, 2}, {3, 4, 5}}));
+  EXPECT_EQ(1, cm.true_positive());
+  EXPECT_EQ(2, cm.true_negative());
+  EXPECT_EQ(2, cm.false_positive());
+  EXPECT_EQ(0, cm.false_negative());
+
+  // the same but with different threshold
+  cm = compare(ccl({{1, 10, 2}, {3, 4, 5}, {6}, {7}, {8, 9}}),
+               ccl({{1, 2}, {3, 4, 5}}), 2. / 3.);
+  EXPECT_EQ(2, cm.true_positive());
+  EXPECT_EQ(2, cm.true_negative());
+  EXPECT_EQ(1, cm.false_positive());
+  EXPECT_EQ(0, cm.false_negative());
 }
 }
