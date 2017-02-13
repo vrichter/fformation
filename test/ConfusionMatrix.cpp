@@ -100,4 +100,30 @@ TEST(ConfusionMatrixTest, MeanCalculationsDifferent) {
   ASSERT_DOUBLE_EQ(mean_recall / double(matrices.size()),
                    ConfusionMatrix::calculateMeanRecall(matrices));
 }
+
+TEST(ConfusionMatrixTest, F1ScoreCalculations) {
+  double precision = 1. / (double)std::rand();
+  double recall = 1. / (double)std::rand();
+  ASSERT_DOUBLE_EQ((2 * precision * recall / (precision + recall)),
+                   ConfusionMatrix::calculateF1Score(precision, recall));
+  std::vector<ConfusionMatrix> matrices;
+  for (size_t i = 0; i < mcMatrices(); ++i) {
+    matrices.push_back(random());
+  }
+  double mean_precision = 0.;
+  double mean_recall = 0.;
+  for (auto mat : matrices) {
+    precision = mat.calculatePrecision();
+    recall = mat.calculateRecall();
+    mean_precision += precision;
+    mean_recall += recall;
+    ASSERT_DOUBLE_EQ(ConfusionMatrix::calculateF1Score(precision, recall),
+                     mat.calculateF1Score());
+  }
+  mean_precision /= double(matrices.size());
+  mean_recall /= double(matrices.size());
+  ASSERT_DOUBLE_EQ(
+      ConfusionMatrix::calculateF1Score(mean_precision, mean_recall),
+      ConfusionMatrix::calculateMeanF1Score(matrices));
+}
 }

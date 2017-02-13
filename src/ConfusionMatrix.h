@@ -59,6 +59,15 @@ public:
            static_cast<RealType>(true_positive() + false_negative());
   }
 
+  static RealType calculateF1Score(const RealType &precision,
+                                   const RealType &recall) {
+    return (2. * precision * recall) / (precision + recall);
+  }
+
+  RealType calculateF1Score() const {
+    return calculateF1Score(calculatePrecision(), calculateRecall());
+  }
+
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"true-positive\": " << true_positive()
         << ", \"false-positive\": " << false_positive()
@@ -88,6 +97,12 @@ public:
   static RealType calculateMeanRecall(const Set matrices) {
     return calculateMean(
         matrices, [](const ConfusionMatrix &m) { return m.calculateRecall(); });
+  }
+
+  template <typename Set>
+  static RealType calculateMeanF1Score(const Set matrices) {
+    return calculateF1Score(calculateMeanPrecision(matrices),
+                            calculateMeanRecall(matrices));
   }
 
 private:
