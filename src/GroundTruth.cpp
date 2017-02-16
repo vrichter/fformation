@@ -93,3 +93,26 @@ GroundTruth GroundTruth::readMatlabJson(const std::string &filename) {
 void GroundTruth::serializeJson(std::ostream &out) const {
   serializeIterable(out, _classifications);
 }
+
+GroundTruth::GroundTruth(const std::vector<Classification> &classifications)
+    : _classifications(classifications) {
+  for (size_t i = 0; i < classifications.size(); ++i) {
+    auto &cl = classifications[i];
+    if (_classification_positions.find(cl.timestamp()) !=
+        _classification_positions.end()) {
+      throw Exception("Ground truth cannot contain multiple classifications "
+                      "with the same timestamp.");
+    }
+    _classification_positions[cl.timestamp()] = i;
+  }
+}
+
+const fformation::Classification *
+GroundTruth::findClassification(const Timestamp &timestamp) const {
+  auto it = _classification_positions.find(timestamp);
+  if (it == _classification_positions.end()) {
+    return nullptr;
+  } else {
+    return &_classifications[it->second];
+  }
+}

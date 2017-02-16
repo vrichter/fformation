@@ -27,12 +27,18 @@ namespace fformation {
 class GroundTruth : public JsonSerializable {
 public:
   GroundTruth(const std::vector<Classification> &classifications =
-                  std::vector<Classification>())
-      : _classifications(classifications) {}
+                  std::vector<Classification>());
 
   const std::vector<Classification> &classifications() const {
     return _classifications;
   }
+
+  /**
+  * @brief findClassification finds and returns a pointer to a Classification
+  * with the passed timestamp.
+  * @return may return nullptr if a matching Classification cannot be found
+  */
+  const Classification *findClassification(const Timestamp &timestamp) const;
 
   virtual void serializeJson(std::ostream &out) const override;
 
@@ -40,6 +46,7 @@ public:
 
 private:
   std::vector<Classification> _classifications;
+  std::map<Timestamp, size_t> _classification_positions;
 };
 
 } // namespace fformation
