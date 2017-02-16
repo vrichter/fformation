@@ -23,11 +23,10 @@
 
 namespace fformation {
 
-template <typename INTEGER = int, typename REAL = double>
 class ConfusionMatrix : public JsonSerializable {
 public:
-  typedef INTEGER IntType;
-  typedef REAL RealType;
+  typedef int IntType;
+  typedef double RealType;
 
   ConfusionMatrix() = default;
 

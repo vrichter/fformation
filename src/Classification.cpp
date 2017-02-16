@@ -96,7 +96,7 @@ static std::vector<IdGroup> fillUpFrom(const std::vector<IdGroup> &fill,
   return result;
 }
 
-ConfusionMatrix<>
+ConfusionMatrix
 Classification::createConfusionMatrix(const Classification &ground_truth,
                                       double threshhold) const {
   assert(threshhold >= 0.);
@@ -107,10 +107,10 @@ Classification::createConfusionMatrix(const Classification &ground_truth,
   auto gt = fillUpFrom(ground_truth.idGroups(), _groups);
 
   // count the various cases
-  ConfusionMatrix<>::IntType true_positive = 0;
-  ConfusionMatrix<>::IntType true_negative = 0;
-  ConfusionMatrix<>::IntType false_negative = 0;
-  ConfusionMatrix<>::IntType false_positive = 0;
+  ConfusionMatrix::IntType true_positive = 0;
+  ConfusionMatrix::IntType true_negative = 0;
+  ConfusionMatrix::IntType false_negative = 0;
+  ConfusionMatrix::IntType false_positive = 0;
   for (auto classified_group : cl) {
     if (classified_group.persons().size() == 1) {
       // not added to a group. validate that person is not in a group in gt
@@ -142,8 +142,8 @@ Classification::createConfusionMatrix(const Classification &ground_truth,
       }
     } // else ignore empty groups
   }
-  return ConfusionMatrix<>(true_positive, false_positive, true_negative,
-                           false_negative);
+  return ConfusionMatrix(true_positive, false_positive, true_negative,
+                         false_negative);
 }
 
 double Classification::calculateGroupIntersection(const IdGroup &first,

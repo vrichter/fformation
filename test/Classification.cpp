@@ -29,7 +29,7 @@ using fformation::Timestamp;
 using fformation::IdGroup;
 using fformation::PersonId;
 using fformation::Exception;
-typedef fformation::ConfusionMatrix<> ConfusionMatrix;
+using fformation::ConfusionMatrix;
 
 static std::set<PersonId> persons(const std::vector<size_t> ids) {
   std::set<PersonId> result;

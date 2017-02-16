@@ -24,7 +24,7 @@
 #include "gtest/gtest.h"
 
 namespace {
-typedef fformation::ConfusionMatrix<> ConfusionMatrix;
+typedef fformation::ConfusionMatrix ConfusionMatrix;
 
 static ConfusionMatrix random() {
   return ConfusionMatrix((std::rand() + 1), (std::rand() + 1),
