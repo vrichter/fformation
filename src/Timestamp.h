@@ -17,6 +17,8 @@
 
 #pragma once
 #include "JsonSerializable.h"
+#include <cmath>
+#include <limits>
 
 namespace fformation {
 
@@ -29,11 +31,16 @@ public:
   const TimestampType &time() const { return _timestamp; }
 
   friend bool operator==(const Timestamp &lhs, const Timestamp &rhs) {
-    return lhs._timestamp == rhs._timestamp;
+    return lhs.equals(rhs);
   }
 
   friend bool operator<(const Timestamp &lhs, const Timestamp &rhs) {
     return lhs._timestamp < rhs._timestamp;
+  }
+
+  bool equals(const Timestamp &other) const {
+    return std::fabs(time() - other.time()) <
+           std::numeric_limits<TimestampType>::epsilon();
   }
 
   virtual void serializeJson(std::ostream &out) const override;
