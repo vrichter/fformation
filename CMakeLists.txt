@@ -67,7 +67,7 @@ foreach(p LIB BIN INCLUDE CMAKE)
 endforeach()
 
 # boost
-find_package(Boost 1.54 COMPONENTS date_time REQUIRED)
+find_package(Boost 1.54 COMPONENTS program_options REQUIRED)
 
 message(STATUS "Looking for doxygen")
 find_program(DOXYGEN_BIN NAMES doxygen)
@@ -127,12 +127,15 @@ foreach(APP ${APPS})
   STRING(REGEX REPLACE "[.]cpp" "" APP ${APP})
   message(STATUS "-- Adding executable: ${APP}")
 
+  link_directories(${Boost_LIBRARY_DIRS})
+
   add_executable("${PROJECT_NAME}-${APP}"
     "${PROJECT_SOURCE_DIR}/app/${APP}.cpp"
   )
 
   target_link_libraries("${PROJECT_NAME}-${APP}"
     ${PROJECT_NAME}
+    ${Boost_LIBRARIES}
   )
 
   install(TARGETS "${PROJECT_NAME}-${APP}"
