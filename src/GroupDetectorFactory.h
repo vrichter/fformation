@@ -34,8 +34,7 @@ public:
 
   GroupDetector::Ptr create(const Options &options);
 
-  void addDetector(const std::string &name,
-                   const ConstructorFunction &constructor);
+  GroupDetectorFactory &addDetector(const std::string &name, const ConstructorFunction &constructor);
 
   std::vector<std::string> listDetectors() const;
 

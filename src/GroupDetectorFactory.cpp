@@ -67,9 +67,10 @@ GroupDetector::Ptr GroupDetectorFactory::create(const std::string &name,
   return it->second(options);
 }
 
-void GroupDetectorFactory::addDetector(const std::string &name,
+GroupDetectorFactory &GroupDetectorFactory::addDetector(const std::string &name,
                                        const ConstructorFunction &constructor) {
   _detectors[name] = constructor;
+  return *this;
 }
 
 std::vector<std::string> GroupDetectorFactory::listDetectors() const {
