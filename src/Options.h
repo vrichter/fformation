@@ -37,6 +37,8 @@ public:
   Option(const NameType &name, const ValueType &value)
       : _name(name), _value(value), _has_value(true) {}
   Option(const NameType &name) : _name(name), _value(""), _has_value(false) {}
+  Option(const NameType &name, const int &value) : _name(name), _value(fromValue(value)), _has_value(true) {}
+  Option(const NameType &name, const double &value) : _name(name), _value(fromValue(value)), _has_value(true) {}
 
   const NameType &name() const { return _name; }
   const ValueType &value() const { return _value; }
@@ -55,6 +57,12 @@ public:
                 "' to a valid value.");
     }
     return result;
+  }
+
+  template<typename T> ValueType fromValue(const T value){
+    std::stringstream str;
+    str << value;
+    return str.str();
   }
 
 private:
