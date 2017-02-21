@@ -37,6 +37,7 @@ using fformation::Evaluation;
 using fformation::GroupDetector;
 using fformation::GroupDetectorFactory;
 using fformation::ConfusionMatrix;
+using fformation::Option;
 using fformation::Options;
 
 static std::string getClassificators(std::string prefix) {
@@ -96,6 +97,9 @@ int main(const int argc, const char **args) {
   std::string settings_path = path + "/settings.json";
   Options override =
       Options::parseFromString(program_options["evaluation"].as<std::string>());
+  Settings settings = Settings::readMatlabJson(settings_path);
+  override.instertIfMissing(Option("stride",settings.stride()));
+  override.instertIfMissing(Option("mdl",settings.mdl()));
 
   GroupDetector::Ptr detector =
       GroupDetectorFactory::getDefaultInstance().create(
@@ -103,7 +107,6 @@ int main(const int argc, const char **args) {
 
   Features features = Features::readMatlabJson(features_path);
   GroundTruth groundtruth = GroundTruth::readMatlabJson(groundtruth_path);
-  Settings settings = Settings::readMatlabJson(settings_path);
 
   Evaluation evaluation(features, groundtruth, settings, *detector.get(),
                         override);
