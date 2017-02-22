@@ -65,8 +65,13 @@ const bool Options::hasOption(const Option::NameType &name) const {
   return this->find(name) != this->end();
 }
 
-const Option &Options::getOption(const Option::NameType &name) const {
-  return *this->find(name);
+const Option &Options::getOption(const Option::NameType &name) const throw(Exception){
+  auto it = this->find(name);
+  if(it != this->end()){
+    return *it;
+  } else {
+    throw Exception("Option with name '" + name + "' not found.");
+  }
 }
 
 Options
