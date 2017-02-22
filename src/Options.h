@@ -23,6 +23,54 @@
 
 namespace fformation {
 
+namespace validators {
+
+  template <typename T>
+  class Validator {
+  public:
+    virtual bool validate(T accept) const = 0;
+  };
+
+  template <typename T> class Accept : public Validator<T>{
+  public:
+    virtual bool validate(T accept) const final { return true; }
+  };
+
+  template <typename T> class MinMax : public Validator<T> {
+  public:
+
+    enum class Exclude {
+      None,
+      Min,
+      Max,
+      Both
+    };
+
+    MinMax(const T &min, const T &max, Exclude config = Exclude::None ) : _min(min), _max(max), _exclude(config) {}
+    virtual bool validate(T accept) const final {
+      switch(_exclude) {
+        case Exclude::None:
+          return _min <= accept && accept <= _max;
+        case Exclude::Min:
+          return _min < accept && accept <= _max;
+        case Exclude::Max:
+          return _min <= accept && accept < _max;
+        case Exclude::Both:
+          return _min < accept && accept < _max;
+        default:
+          throw Exception("Unknown Exclude type.");
+      }
+    }
+
+  private:
+    T _min;
+    T _max;
+    Exclude _exclude;
+  };
+
+} // namespace vaidators
+
+
 class Option {
 public:
   struct Comp {
@@ -44,15 +92,11 @@ public:
   const ValueType &value() const { return _value; }
   const bool &has_value() const { return _has_value; }
 
-  template <typename T> struct Accept {
-    static bool validate(T accept) { return true; }
-  };
-
-  template <typename T, typename Validator = Accept<T>> T convertValue() const {
+  template <typename T> T convertValue(const validators::Validator<T>& validator = validators::Accept<T>()) const {
     T result;
     std::stringstream str(_value);
     str >> result;
-    if (!Validator::validate(result)) {
+    if (!validator.validate(result)) {
       Exception("Cannot convert option '" + _name + "'='" + _value +
                 "' to a valid value.");
     }
