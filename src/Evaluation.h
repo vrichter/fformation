@@ -40,7 +40,7 @@ public:
   const std::vector<ConfusionMatrix> confusionMatrices() const {
     return _confusion_matrices;
   }
-  const std::ostream &printMatlabOutput(std::ostream &out) const;
+  const std::ostream &printMatlabOutput(std::ostream &out, bool print_matches=true) const;
 
 private:
   double _threshold = 2. / 3.;

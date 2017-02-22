@@ -56,17 +56,23 @@ static std::ostream &printMatlab(const Classification &cl, std::ostream &out) {
   return out;
 }
 
-const std::ostream &Evaluation::printMatlabOutput(std::ostream &out) const {
+static bool perfectMatch(const ConfusionMatrix &m){
+  return m.false_negative() == 0 && m.false_positive() == 0;
+}
+
+const std::ostream &Evaluation::printMatlabOutput(std::ostream &out, bool print_matches) const {
   assert(_classifications.size() == _confusion_matrices.size());
   assert(_ground_truths.size() == _confusion_matrices.size());
   for (size_t frame = 0; frame < _classifications.size(); ++frame) {
-    out << "Frame: " << frame + 1 << "/" << _classifications.size() << "\n";
-    out << "   FOUND:-- ";
-    printMatlab(_classifications[frame], out);
-    out << "\n";
-    out << "   GT   :-- ";
-    printMatlab(_ground_truths[frame], out);
-    out << "\n";
+    if(print_matches || !perfectMatch(_confusion_matrices[frame])) {
+      out << "Frame: " << frame + 1 << "/" << _classifications.size() << "\n";
+      out << "   FOUND:-- ";
+      printMatlab(_classifications[frame], out);
+      out << "\n";
+      out << "   GT   :-- ";
+      printMatlab(_ground_truths[frame], out);
+      out << "\n";
+    }
   }
   auto precision = ConfusionMatrix::calculateMeanPrecision(_confusion_matrices);
   auto recall = ConfusionMatrix::calculateMeanRecall(_confusion_matrices);
