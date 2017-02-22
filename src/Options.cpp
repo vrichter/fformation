@@ -58,8 +58,21 @@ static Option parseOption(const std::string &option) {
   return Option(name);
 }
 
-Options::Options(Options::iterator begin, Options::iterator end)
-    : std::set<Option, Option::Comp>(begin, end) {}
+void Options::override(const Options &other) {
+  for (Option o : other){
+    override(o);
+  }
+}
+
+void Options::override(const Option &other) {
+  auto it = this->find(other.name());
+  if(it == this->end()){
+    this->insert(other);
+  } else if (it->value() != other.value()){
+    this->erase(it);
+    this->insert(other);
+  }
+}
 
 const bool Options::hasOption(const Option::NameType &name) const {
   return this->find(name) != this->end();

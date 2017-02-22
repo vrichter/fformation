@@ -98,8 +98,8 @@ int main(const int argc, const char **args) {
   Options override =
       Options::parseFromString(program_options["evaluation"].as<std::string>());
   Settings settings = Settings::readMatlabJson(settings_path);
-  override.instertIfMissing(Option("stride",settings.stride()));
-  override.instertIfMissing(Option("mdl",settings.mdl()));
+  override.insert(Option("stride",settings.stride()));
+  override.insert(Option("mdl",settings.mdl()));
 
   GroupDetector::Ptr detector =
       GroupDetectorFactory::getDefaultInstance().create(

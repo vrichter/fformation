@@ -118,7 +118,9 @@ private:
 class Options : public std::set<Option, Option::Comp> {
 public:
   Options() = default;
-  Options(Options::iterator begin, Options::iterator end);
+
+  void override(const Options &other);
+  void override(const Option &other);
 
   const bool hasOption(const Option::NameType &name) const;
   const Option &getOption(const Option::NameType &name) const throw(Exception);

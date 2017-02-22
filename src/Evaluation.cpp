@@ -23,10 +23,6 @@ using fformation::ConfusionMatrix;
 using fformation::Timestamp;
 using fformation::Classification;
 
-struct ThresholdValidator {
-  static bool validate(double t) { return (t >= 0. && t <= 1.); }
-};
-
 Evaluation::Evaluation(const Features &features,
                        const GroundTruth &ground_truth,
                        const Settings &settings, const GroupDetector &detector,
@@ -34,7 +30,7 @@ Evaluation::Evaluation(const Features &features,
   // apply options
   if (options.hasOption("threshold")) {
     _threshold = options.getOption("threshold")
-                     .convertValue<double, ThresholdValidator>();
+                     .convertValue<double>(validators::MinMax<double>(0.,1.));
   }
   // do the evaluation
   for (auto obs : features.observations()) {
