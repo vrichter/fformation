@@ -42,13 +42,14 @@ GroupDetectorFactory &GroupDetectorFactory::getDefaultInstance() {
 }
 
 GroupDetector::Ptr GroupDetectorFactory::create(const std::string &config) {
-  auto name_and_options = Options::parseFromString(config);
-  if (name_and_options.empty()) {
+  size_t pos = config.find('@');
+  std::string name = config.substr(0,pos);
+  if (name.empty()) {
     throw Exception("Factory cannot create an instance from an empty config.");
   }
-  auto name = *name_and_options.begin();
-  auto options = Options(name_and_options.begin(), name_and_options.end());
-  return create(name.name(), options);
+  std::string options_str = (pos < config.size()) ? config.substr(pos) : "";
+  auto options = Options::parseFromString(options_str);
+  return create(name, options);
 }
 
 GroupDetector::Ptr GroupDetectorFactory::create(const std::string &name,
