@@ -91,12 +91,3 @@ Options::parseFromString(const std::string &options,
   }
   return result;
 }
-
-
-bool Options::instertIfMissing(const Option &option) {
-  if(this->find(option) == this->end()){
-    return false;
-  } else {
-    return this->insert(option).second;
-  }
-}

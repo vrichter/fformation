@@ -122,8 +122,6 @@ public:
 
   const bool hasOption(const Option::NameType &name) const;
   const Option &getOption(const Option::NameType &name) const throw(Exception);
-  const Option &getOption(const Option::NameType &name) const;
-  bool instertIfMissing(const Option &option);
 
   static Options
   parseFromString(const std::string &options,
