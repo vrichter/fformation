@@ -95,20 +95,21 @@ int main(const int argc, const char **args) {
   std::string features_path = path + "/features.json";
   std::string groundtruth_path = path + "/groundtruth.json";
   std::string settings_path = path + "/settings.json";
-  Options override =
+  Options options =
       Options::parseFromString(program_options["evaluation"].as<std::string>());
   Settings settings = Settings::readMatlabJson(settings_path);
-  override.insert(Option("stride",settings.stride()));
-  override.insert(Option("mdl",settings.mdl()));
+  auto config = GroupDetectorFactory::parseConfig(
+      program_options["classificator"].as<std::string>());
+  config.second.insert(Option("stride", settings.stride()));
+  config.second.insert(Option("mdl", settings.mdl()));
 
   GroupDetector::Ptr detector =
-      GroupDetectorFactory::getDefaultInstance().create(
-          program_options["classificator"].as<std::string>());
+      GroupDetectorFactory::getDefaultInstance().create(config);
 
   Features features = Features::readMatlabJson(features_path);
   GroundTruth groundtruth = GroundTruth::readMatlabJson(groundtruth_path);
 
   Evaluation evaluation(features, groundtruth, settings, *detector.get(),
-                        override);
+                        options);
   evaluation.printMatlabOutput(std::cout);
 }
