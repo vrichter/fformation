@@ -36,49 +36,46 @@ public:
   OptionsKeeper(const Options &options) : GroupDetector(options) {}
 
   virtual Classification detect(const Observation &observation) const final {
-    return  Classification(observation.timestamp(),{});
+    return Classification(observation.timestamp(), {});
   }
 };
 
 TEST(GroupDetectorFactory, DefaultInstance) {
   auto &inst = GroupDetectorFactory::getDefaultInstance();
-  EXPECT_EQ(&inst,&GroupDetectorFactory::getDefaultInstance());
+  EXPECT_EQ(&inst, &GroupDetectorFactory::getDefaultInstance());
 
   GroupDetector::Ptr det;
   EXPECT_NO_THROW(det = inst.create("one"));
-  EXPECT_NE(nullptr,det.get());
+  EXPECT_NE(nullptr, det.get());
   EXPECT_NO_THROW(det = inst.create("none"));
-  EXPECT_NE(nullptr,det.get());
+  EXPECT_NE(nullptr, det.get());
 }
 
 TEST(GroupDetectorFactory, AddConstructors) {
   GroupDetectorFactory inst;
-  EXPECT_THROW(inst.create("one"),fformation::Exception);
+  EXPECT_THROW(inst.create("one"), fformation::Exception);
 
-  inst.addDetector("test",[](const Options &opt) {
+  inst.addDetector("test", [](const Options &opt) {
     return GroupDetector::Ptr(new OptionsKeeper(opt));
   });
 
   GroupDetector::Ptr detector;
   EXPECT_NO_THROW(detector = inst.create("test"));
-  EXPECT_EQ(0u,detector->options().size());
+  EXPECT_EQ(0u, detector->options().size());
 
   Option option("name", "value");
   Options options;
   options.insert(option);
-  EXPECT_NO_THROW(detector = inst.create("test",options));
-  EXPECT_EQ(options.size(),detector->options().size());
-  EXPECT_EQ("value",detector->options().getOption("name").value());
+  EXPECT_NO_THROW(detector = inst.create("test", options));
+  EXPECT_EQ(options.size(), detector->options().size());
+  EXPECT_EQ("value", detector->options().getOption("name").value());
 
   EXPECT_NO_THROW(detector = inst.create("test@name"));
-  EXPECT_EQ(1u,detector->options().size());
-  EXPECT_EQ("",detector->options().getOption("name").value());
+  EXPECT_EQ(1u, detector->options().size());
+  EXPECT_EQ("", detector->options().getOption("name").value());
 
   EXPECT_NO_THROW(detector = inst.create("test@name=value"));
-  EXPECT_EQ(1u,detector->options().size());
-  EXPECT_EQ("value",detector->options().getOption("name").value());
-
-
+  EXPECT_EQ(1u, detector->options().size());
+  EXPECT_EQ("value", detector->options().getOption("name").value());
 }
-
 }

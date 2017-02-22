@@ -41,7 +41,6 @@ private:
 
 class OneGroupDetector : public GroupDetector {
 public:
-
   OneGroupDetector() : GroupDetector(Options()) {}
 
   virtual Classification detect(const Observation &observation) const final;
@@ -49,10 +48,9 @@ public:
 
 class NonGroupDetector : public GroupDetector {
 public:
-
   NonGroupDetector() : GroupDetector(Options()) {}
 
   virtual Classification detect(const Observation &observation) const final;
 };
 
-}// namespace fformation
+} // namespace fformation

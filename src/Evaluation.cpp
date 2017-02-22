@@ -30,7 +30,7 @@ Evaluation::Evaluation(const Features &features,
   // apply options
   if (options.hasOption("threshold")) {
     _threshold = options.getOption("threshold")
-                     .convertValue<double>(validators::MinMax<double>(0.,1.));
+                     .convertValue<double>(validators::MinMax<double>(0., 1.));
   }
   // do the evaluation
   for (auto obs : features.observations()) {
@@ -56,15 +56,16 @@ static std::ostream &printMatlab(const Classification &cl, std::ostream &out) {
   return out;
 }
 
-static bool perfectMatch(const ConfusionMatrix &m){
+static bool perfectMatch(const ConfusionMatrix &m) {
   return m.false_negative() == 0 && m.false_positive() == 0;
 }
 
-const std::ostream &Evaluation::printMatlabOutput(std::ostream &out, bool print_matches) const {
+const std::ostream &Evaluation::printMatlabOutput(std::ostream &out,
+                                                  bool print_matches) const {
   assert(_classifications.size() == _confusion_matrices.size());
   assert(_ground_truths.size() == _confusion_matrices.size());
   for (size_t frame = 0; frame < _classifications.size(); ++frame) {
-    if(print_matches || !perfectMatch(_confusion_matrices[frame])) {
+    if (print_matches || !perfectMatch(_confusion_matrices[frame])) {
       out << "Frame: " << frame + 1 << "/" << _classifications.size() << "\n";
       out << "   FOUND:-- ";
       printMatlab(_classifications[frame], out);

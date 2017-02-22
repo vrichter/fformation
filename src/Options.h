@@ -25,51 +25,44 @@ namespace fformation {
 
 namespace validators {
 
-  template <typename T>
-  class Validator {
-  public:
-    virtual bool validate(T accept) const = 0;
-  };
+template <typename T> class Validator {
+public:
+  virtual bool validate(T accept) const = 0;
+};
 
-  template <typename T> class Accept : public Validator<T>{
-  public:
-    virtual bool validate(T accept) const final { return true; }
-  };
+template <typename T> class Accept : public Validator<T> {
+public:
+  virtual bool validate(T accept) const final { return true; }
+};
 
-  template <typename T> class MinMax : public Validator<T> {
-  public:
+template <typename T> class MinMax : public Validator<T> {
+public:
+  enum class Exclude { None, Min, Max, Both };
 
-    enum class Exclude {
-      None,
-      Min,
-      Max,
-      Both
-    };
-
-    MinMax(const T &min, const T &max, Exclude config = Exclude::None ) : _min(min), _max(max), _exclude(config) {}
-    virtual bool validate(T accept) const final {
-      switch(_exclude) {
-        case Exclude::None:
-          return _min <= accept && accept <= _max;
-        case Exclude::Min:
-          return _min < accept && accept <= _max;
-        case Exclude::Max:
-          return _min <= accept && accept < _max;
-        case Exclude::Both:
-          return _min < accept && accept < _max;
-        default:
-          throw Exception("Unknown Exclude type.");
-      }
+  MinMax(const T &min, const T &max, Exclude config = Exclude::None)
+      : _min(min), _max(max), _exclude(config) {}
+  virtual bool validate(T accept) const final {
+    switch (_exclude) {
+    case Exclude::None:
+      return _min <= accept && accept <= _max;
+    case Exclude::Min:
+      return _min < accept && accept <= _max;
+    case Exclude::Max:
+      return _min <= accept && accept < _max;
+    case Exclude::Both:
+      return _min < accept && accept < _max;
+    default:
+      throw Exception("Unknown Exclude type.");
     }
+  }
 
-  private:
-    T _min;
-    T _max;
-    Exclude _exclude;
-  };
+private:
+  T _min;
+  T _max;
+  Exclude _exclude;
+};
 
 } // namespace vaidators
-
 
 class Option {
 public:
@@ -85,14 +78,18 @@ public:
   Option(const NameType &name, const ValueType &value)
       : _name(name), _value(value), _has_value(true) {}
   Option(const NameType &name) : _name(name), _value(""), _has_value(false) {}
-  Option(const NameType &name, const int &value) : _name(name), _value(fromValue(value)), _has_value(true) {}
-  Option(const NameType &name, const double &value) : _name(name), _value(fromValue(value)), _has_value(true) {}
+  Option(const NameType &name, const int &value)
+      : _name(name), _value(fromValue(value)), _has_value(true) {}
+  Option(const NameType &name, const double &value)
+      : _name(name), _value(fromValue(value)), _has_value(true) {}
 
   const NameType &name() const { return _name; }
   const ValueType &value() const { return _value; }
   const bool &has_value() const { return _has_value; }
 
-  template <typename T> T convertValue(const validators::Validator<T>& validator = validators::Accept<T>()) const {
+  template <typename T>
+  T convertValue(const validators::Validator<T> &validator =
+                     validators::Accept<T>()) const {
     T result;
     std::stringstream str(_value);
     str >> result;
@@ -103,7 +100,7 @@ public:
     return result;
   }
 
-  template<typename T> ValueType fromValue(const T value){
+  template <typename T> ValueType fromValue(const T value) {
     std::stringstream str;
     str << value;
     return str.str();
@@ -128,7 +125,6 @@ public:
   static Options
   parseFromString(const std::string &options,
                   const std::string &separator = "@") throw(Exception);
-
 };
 
 } // namespace fformation

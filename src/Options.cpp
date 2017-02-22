@@ -59,16 +59,16 @@ static Option parseOption(const std::string &option) {
 }
 
 void Options::override(const Options &other) {
-  for (Option o : other){
+  for (Option o : other) {
     override(o);
   }
 }
 
 void Options::override(const Option &other) {
   auto it = this->find(other.name());
-  if(it == this->end()){
+  if (it == this->end()) {
     this->insert(other);
-  } else if (it->value() != other.value()){
+  } else if (it->value() != other.value()) {
     this->erase(it);
     this->insert(other);
   }
@@ -78,9 +78,10 @@ const bool Options::hasOption(const Option::NameType &name) const {
   return this->find(name) != this->end();
 }
 
-const Option &Options::getOption(const Option::NameType &name) const throw(Exception){
+const Option &Options::getOption(const Option::NameType &name) const
+    throw(Exception) {
   auto it = this->find(name);
-  if(it != this->end()){
+  if (it != this->end()) {
     return *it;
   } else {
     throw Exception("Option with name '" + name + "' not found.");
