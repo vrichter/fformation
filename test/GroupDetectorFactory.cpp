@@ -69,6 +69,16 @@ TEST(GroupDetectorFactory, AddConstructors) {
   EXPECT_NO_THROW(detector = inst.create("test",options));
   EXPECT_EQ(options.size(),detector->options().size());
   EXPECT_EQ("value",detector->options().getOption("name").value());
+
+  EXPECT_NO_THROW(detector = inst.create("test@name"));
+  EXPECT_EQ(1u,detector->options().size());
+  EXPECT_EQ("",detector->options().getOption("name").value());
+
+  EXPECT_NO_THROW(detector = inst.create("test@name=value"));
+  EXPECT_EQ(1u,detector->options().size());
+  EXPECT_EQ("value",detector->options().getOption("name").value());
+
+
 }
 
 }

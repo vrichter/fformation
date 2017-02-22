@@ -42,14 +42,8 @@ GroupDetectorFactory &GroupDetectorFactory::getDefaultInstance() {
 }
 
 GroupDetector::Ptr GroupDetectorFactory::create(const std::string &config) {
-  size_t pos = config.find('@');
-  std::string name = config.substr(0,pos);
-  if (name.empty()) {
-    throw Exception("Factory cannot create an instance from an empty config.");
-  }
-  std::string options_str = (pos < config.size()) ? config.substr(pos) : "";
-  auto options = Options::parseFromString(options_str);
-  return create(name, options);
+  auto parsed = parseConfig(config);
+  return create(parsed.first, parsed.second);
 }
 
 GroupDetector::Ptr GroupDetectorFactory::create(const std::string &name,
@@ -81,4 +75,14 @@ std::vector<std::string> GroupDetectorFactory::listDetectors() const {
     result.push_back(det.first);
   }
   return result;
+}
+
+std::pair<std::string,Options> GroupDetectorFactory::parseConfig(const std::string &config) {
+  size_t pos = config.find('@');
+  std::string name = config.substr(0,pos);
+  if (name.empty()) {
+    throw Exception("Factory cannot create an instance from an empty config.");
+  }
+  std::string options_str = (pos < config.size()) ? config.substr(pos) : "";
+  return std::make_pair(name,Options::parseFromString(options_str));
 }

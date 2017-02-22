@@ -40,6 +40,8 @@ public:
 
   static GroupDetectorFactory &getDefaultInstance();
 
+  static std::pair<std::string,Options> parseConfig(const std::string &config);
+
 private:
   std::map<std::string, ConstructorFunction> _detectors;
 };
