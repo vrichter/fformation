@@ -30,17 +30,18 @@ public:
 
   GroupDetector::Ptr create(const std::string &config);
 
+  GroupDetector::Ptr create(const std::pair<std::string, Options> &config);
+
   GroupDetector::Ptr create(const std::string &name, const Options &options);
 
-  GroupDetector::Ptr create(const Options &options);
-
-  GroupDetectorFactory &addDetector(const std::string &name, const ConstructorFunction &constructor);
+  GroupDetectorFactory &addDetector(const std::string &name,
+                                    const ConstructorFunction &constructor);
 
   std::vector<std::string> listDetectors() const;
 
   static GroupDetectorFactory &getDefaultInstance();
 
-  static std::pair<std::string,Options> parseConfig(const std::string &config);
+  static std::pair<std::string, Options> parseConfig(const std::string &config);
 
 private:
   std::map<std::string, ConstructorFunction> _detectors;
