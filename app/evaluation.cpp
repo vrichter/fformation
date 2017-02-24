@@ -40,6 +40,8 @@ using fformation::ConfusionMatrix;
 using fformation::Option;
 using fformation::Options;
 
+auto &factory = GroupDetectorFactory::getDefaultInstance();
+
 static std::string getClassificators(std::string prefix) {
   std::stringstream str;
   str << prefix;
@@ -54,26 +56,23 @@ static std::string getClassificators(std::string prefix) {
 int main(const int argc, const char **args) {
   boost::program_options::variables_map program_options;
   boost::program_options::options_description desc("Allowed options");
-  desc.add_options()("help,h", "produce help message")
-
-      ("classificator,c",
-       boost::program_options::value<std::string>()->default_value("list"),
-       getClassificators(
-           "Which classificator should be used for evaluation. Possible: ")
-           .c_str())
-
-          ("evaluation,e",
-           boost::program_options::value<std::string>()->default_value(
-               "threshold=0.75"),
-           "May be used to override evaluation settings and default settings "
-           "from settings.json")
-
-              ("dataset,d",
-               boost::program_options::value<std::string>()->required(),
-               "The root path of the evaluation dataset. The path is expected "
-               "to contain features.json, groundtruth.json and settings.json")
-
-      ;
+  desc.add_options()("help,h", "produce help message");
+  desc.add_options()(
+      "classificator,c",
+      boost::program_options::value<std::string>()->default_value("list"),
+      getClassificators(
+          "Which classificator should be used for evaluation. Possible: ")
+          .c_str());
+  desc.add_options()(
+      "evaluation,e",
+      boost::program_options::value<std::string>()->default_value(
+          "threshold=0.6666"),
+      "May be used to override evaluation settings and default settings "
+      "from settings.json");
+  desc.add_options()(
+      "dataset,d", boost::program_options::value<std::string>()->required(),
+      "The root path of the evaluation dataset. The path is expected "
+      "to contain features.json, groundtruth.json and settings.json");
   try {
     boost::program_options::store(
         boost::program_options::parse_command_line(argc, args, desc),
@@ -95,21 +94,20 @@ int main(const int argc, const char **args) {
   std::string features_path = path + "/features.json";
   std::string groundtruth_path = path + "/groundtruth.json";
   std::string settings_path = path + "/settings.json";
-  Options options =
-      Options::parseFromString(program_options["evaluation"].as<std::string>());
   Settings settings = Settings::readMatlabJson(settings_path);
+
   auto config = GroupDetectorFactory::parseConfig(
       program_options["classificator"].as<std::string>());
   config.second.insert(Option("stride", settings.stride()));
   config.second.insert(Option("mdl", settings.mdl()));
 
-  GroupDetector::Ptr detector =
-      GroupDetectorFactory::getDefaultInstance().create(config);
+  GroupDetector::Ptr detector = factory.create(config.first, config.second);
 
   Features features = Features::readMatlabJson(features_path);
   GroundTruth groundtruth = GroundTruth::readMatlabJson(groundtruth_path);
 
   Evaluation evaluation(features, groundtruth, settings, *detector.get(),
-                        options);
-  evaluation.printMatlabOutput(std::cout);
+                        Options::parseFromString(
+                            program_options["evaluation"].as<std::string>()));
+  evaluation.printMatlabOutput(std::cout, false);
 }
