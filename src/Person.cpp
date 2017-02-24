@@ -20,6 +20,8 @@
 #include <cmath>
 #include <iostream>
 
+const static double max_visibility_constraint_cost = 10000000.;
+
 using fformation::Person;
 using fformation::Position2D;
 using fformation::Settings;
@@ -57,5 +59,8 @@ double Person::calculateVisibilityCost(const Position2D &group_center,
   }
   // exp(ln(k) * cos(\theta) * (d_i/d_j)) can be rearranged to k^(cos(\theta) *
   // (d_i/d_j))
-  return pow(100, cosinus_angle * (this_distance / other_distance));
+  double result = pow(100, cosinus_angle * (this_distance / other_distance));
+  return (result < max_visibility_constraint_cost)
+             ? result
+             : max_visibility_constraint_cost;
 }
