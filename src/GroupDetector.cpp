@@ -28,11 +28,15 @@ namespace fv = fformation::validators;
 
 Classification
 fformation::OneGroupDetector::detect(const Observation &observation) const {
-  std::set<PersonId> group;
-  for (auto person : observation.group().persons()) {
-    group.insert(person.first);
+  std::vector<IdGroup> groups;
+  if(!observation.group().persons().empty()){
+    std::set<PersonId> group;
+    for (auto person : observation.group().persons()) {
+      group.insert(person.first);
+    }
+    groups.push_back(group);
   }
-  return Classification(observation.timestamp(), std::vector<IdGroup>({group}));
+  return Classification(observation.timestamp(), groups);
 }
 
 Classification
