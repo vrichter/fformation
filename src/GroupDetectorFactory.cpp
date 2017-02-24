@@ -33,6 +33,9 @@ GroupDetectorFactory fillDefault() {
   fac.addDetector("none", [](const Options &opt) {
     return GroupDetector::Ptr(new fformation::NonGroupDetector());
   });
+  fac.addDetector("grow", [](const Options &opt) {
+    return GroupDetector::Ptr(new fformation::GrowingGroupDetector(opt));
+  });
   return fac;
 }
 

@@ -53,4 +53,15 @@ public:
   virtual Classification detect(const Observation &observation) const final;
 };
 
+class GrowingGroupDetector : public GroupDetector {
+public:
+  GrowingGroupDetector(const Options &options);
+
+  virtual Classification detect(const Observation &observation) const final;
+
+private:
+  double _mdl;
+  Person::Stride _stride;
+};
+
 } // namespace fformation
