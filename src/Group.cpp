@@ -46,15 +46,20 @@ void Group::serializeJson(std::ostream &out) const {
   serializeMapAsVector(out, _persons);
 }
 
-Position2D Group::calculateCenter(Person::Stride stride) const {
+Position2D Group::calculateCenter(const std::vector<Person> &persons,
+                                  Person::Stride stride) {
   Position2D::Coordinate x = 0.;
   Position2D::Coordinate y = 0.;
-  for (auto person : _persons) {
-    Position2D ts = person.second.calculateTransactionalSegmentPosition(stride);
+  for (auto person : persons) {
+    Position2D ts = person.calculateTransactionalSegmentPosition(stride);
     x += ts.x();
     y += ts.y();
   }
-  return Position2D(x / _persons.size(), y / _persons.size());
+  return Position2D(x / persons.size(), y / persons.size());
+}
+
+Position2D Group::calculateCenter(Person::Stride stride) const {
+  return calculateCenter(generatePersonList(), stride);
 }
 
 std::map<PersonId, Person>
@@ -81,4 +86,13 @@ double Group::calculateDistanceCosts(Person::Stride stride) const {
     cost += group_entry.second.calculateDistanceCosts(group_center, stride);
   }
   return cost;
+}
+
+std::vector<Person> Group::generatePersonList() const {
+  std::vector<Person> result;
+  result.reserve(_persons.size());
+  for (auto person : _persons) {
+    result.push_back(person.second);
+  }
+  return result;
 }

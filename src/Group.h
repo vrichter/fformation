@@ -33,10 +33,14 @@ public:
   Group(const std::vector<Person> &persons);
 
   Position2D calculateCenter(Person::Stride stride) const;
+  static Position2D calculateCenter(const std::vector<Person> &persons,
+                                    Person::Stride stride);
 
   const std::map<PersonId, Person> &persons() const { return _persons; }
 
   std::map<PersonId, Person> find_persons(std::set<PersonId> person_ids) const;
+
+  std::vector<Person> generatePersonList() const;
 
   /**
    * @brief calculateDistanceCosts calculates the sum of the individual distance
