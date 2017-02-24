@@ -35,6 +35,39 @@ public:
   virtual bool validate(T accept) const final { return true; }
 };
 
+template <typename T> class Min : public Validator<T> {
+public:
+  Min(const T &min, bool exclude = false) : _min(min), _exclude(exclude) {}
+  virtual bool validate(T accept) const final {
+    if (_exclude) {
+      return _min < accept;
+    } else {
+      return _min <= accept;
+    }
+  }
+
+private:
+  T _min;
+  bool _exclude;
+};
+
+template <typename T> class Max : public Validator<T> {
+public:
+  Max(const T &max, bool exclude = false) : _max(max), _exclude(exclude) {}
+
+  virtual bool validate(T accept) const final {
+    if (_exclude) {
+      return accept < _max;
+    } else {
+      return accept <= _max;
+    }
+  }
+
+private:
+  T _max;
+  bool _exclude;
+};
+
 template <typename T> class MinMax : public Validator<T> {
 public:
   enum class Exclude { None, Min, Max, Both };
