@@ -28,11 +28,13 @@ public:
   typedef std::function<GroupDetector::Ptr(const Options &)>
       ConstructorFunction;
 
-  GroupDetector::Ptr create(const std::string &config);
+  GroupDetector::Ptr create(const std::string &config) const;
 
-  GroupDetector::Ptr create(const std::pair<std::string, Options> &config);
+  GroupDetector::Ptr
+  create(const std::pair<std::string, Options> &config) const;
 
-  GroupDetector::Ptr create(const std::string &name, const Options &options);
+  GroupDetector::Ptr create(const std::string &name,
+                            const Options &options) const;
 
   GroupDetectorFactory &addDetector(const std::string &name,
                                     const ConstructorFunction &constructor);

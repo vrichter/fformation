@@ -41,17 +41,18 @@ GroupDetectorFactory &GroupDetectorFactory::getDefaultInstance() {
   return defaultInstance;
 }
 
-GroupDetector::Ptr
-GroupDetectorFactory::create(const std::pair<std::string, Options> &config) {
+GroupDetector::Ptr GroupDetectorFactory::create(
+    const std::pair<std::string, Options> &config) const {
   return create(config.first, config.second);
 }
 
-GroupDetector::Ptr GroupDetectorFactory::create(const std::string &config) {
+GroupDetector::Ptr
+GroupDetectorFactory::create(const std::string &config) const {
   return create(parseConfig(config));
 }
 
 GroupDetector::Ptr GroupDetectorFactory::create(const std::string &name,
-                                                const Options &options) {
+                                                const Options &options) const {
   auto it = _detectors.find(name);
   if (it == _detectors.end()) {
     std::stringstream error;
