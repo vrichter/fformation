@@ -53,6 +53,13 @@ between optimizing the group center positions of the current assignment and
 adding a new group for the person with the highest assignment cost until
 convergence.
 
+#### shrink
+
+An EM-Based classification that starts with every person in an own group and
+then alternates between optimizing the group center positions of the current
+assignment and removing the group with the least 'remove-cost' until
+convergence.
+
 #### ...more
 
 [fformation-gco](https://github.com/vrichter/fformation-gco)

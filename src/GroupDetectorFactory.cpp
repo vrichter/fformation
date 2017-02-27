@@ -18,6 +18,7 @@
 #include "GroupDetectorFactory.h"
 #include "Exception.h"
 #include "GroupDetector.h"
+#include "GroupDetectorsEM.h"
 #include <boost/tokenizer.hpp>
 
 using fformation::GroupDetectorFactory;
@@ -34,7 +35,10 @@ GroupDetectorFactory fillDefault() {
     return GroupDetector::Ptr(new fformation::NonGroupDetector());
   });
   fac.addDetector("grow", [](const Options &opt) {
-    return GroupDetector::Ptr(new fformation::GrowingGroupDetector(opt));
+    return GroupDetector::Ptr(new fformation::GroupDetectorGrow(opt));
+  });
+  fac.addDetector("shrink", [](const Options &opt) {
+    return GroupDetector::Ptr(new fformation::GroupDetectorShrink(opt));
   });
   return fac;
 }

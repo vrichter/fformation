@@ -1,6 +1,6 @@
 /********************************************************************
 **                                                                 **
-** File   : src/GroupDetector.h                                    **
+** File   : src/GroupDetectorEM.h                                  **
 ** Authors: Viktor Richter                                         **
 **                                                                 **
 **                                                                 **
@@ -19,38 +19,33 @@
 #include "Classification.h"
 #include "Observation.h"
 #include "Options.h"
+#include "GroupDetector.h"
 #include <memory>
 
 namespace fformation {
 
-class GroupDetector {
+class GroupDetectorGrow : public GroupDetector {
 public:
-  typedef std::unique_ptr<GroupDetector> Ptr;
+  GroupDetectorGrow(const Options &options);
 
-  GroupDetector(const Options &options) : _options(options) {}
-
-  virtual ~GroupDetector() = default;
-
-  virtual Classification detect(const Observation &observation) const = 0;
-
-  const Options &options() const { return _options; }
+  virtual Classification detect(const Observation &observation) const final;
 
 private:
-  Options _options;
+  double _mdl;
+  Person::Stride _stride;
 };
 
-class OneGroupDetector : public GroupDetector {
+class GroupDetectorShrink : public GroupDetector {
 public:
-  OneGroupDetector() : GroupDetector(Options()) {}
+  GroupDetectorShrink(const Options &options);
 
   virtual Classification detect(const Observation &observation) const final;
+
+private:
+  double _mdl;
+  Person::Stride _stride;
 };
 
-class NonGroupDetector : public GroupDetector {
-public:
-  NonGroupDetector() : GroupDetector(Options()) {}
 
-  virtual Classification detect(const Observation &observation) const final;
-};
 
 } // namespace fformation
