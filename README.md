@@ -55,10 +55,10 @@ convergence.
 
 #### ...more
 
-[fformation-gco-v3.0](https://github.com/vrichter/fformation-gco-v3.0)
+[fformation-gco](https://github.com/vrichter/fformation-gco)
 implements the group assignment using a multi label graph-cuts optimization from
 [1] as proposed in [2] and the corresponding matlab code
-([GCFF](https://github.com/franzsetti/GCFF)).
+([GCFF](https://github.com/franzsetti/GCFF)) using the C++ implementation from [gco-v3.0](https://github.com/vrichter/gco-v3.0).
 
 ## Citations
 
