@@ -64,7 +64,7 @@ implements the group assignment using a multi label graph-cuts optimization from
 
 > [1] Delong A, Osokin A, Isack H. N., Boykov Y (2010) "Fast Approximate Energy Minimization with Label Costs". In CVPR.
 
-<p/>
+<p></p>
 
 > [2] Setti F, Russell C, Bassetti C, Cristani M (2015) "F-Formation Detection:
 Individuating Free-Standing Conversational Groups in Images". In PLoS ONE 10(5):
