@@ -18,19 +18,22 @@
 #pragma once
 #include "JsonSerializable.h"
 #include "Position.h"
+#include <boost/optional.hpp>
+#include <boost/optional/optional_io.hpp>
 
 namespace fformation {
 
 typedef double RotationRadian;
+typedef boost::optional<RotationRadian> OptionalRotationRadian;
 
 class Pose2D : public JsonSerializable {
 public:
   Pose2D(const Position2D &position = Position2D(0., 0.),
-         RotationRadian rotation_radian = 0.)
+         OptionalRotationRadian rotation_radian = 0.)
       : _position(position), _rotation_radian(rotation_radian) {}
 
   const Position2D &position() const { return _position; }
-  const RotationRadian &rotation() const { return _rotation_radian; }
+  const OptionalRotationRadian &rotation() const { return _rotation_radian; }
 
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"position\": ";
@@ -40,7 +43,7 @@ public:
 
 private:
   Position2D _position;
-  RotationRadian _rotation_radian;
+  OptionalRotationRadian _rotation_radian;
 };
 
 } // namespace fformation
