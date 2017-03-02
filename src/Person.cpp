@@ -26,18 +26,32 @@ using fformation::Person;
 using fformation::Position2D;
 using fformation::Settings;
 using fformation::RotationRadian;
+using fformation::OptionalRotationRadian;
 
-Position2D Person::calculateTransactionalSegmentPosition(Stride stride) const {
-  return Position2D(
-      _pose.position().x() + (stride * std::cos(_pose.rotation())),
-      _pose.position().y() + (stride * std::sin(_pose.rotation())));
+Position2D
+Person::calculateTransactionalSegmentPosition(const Position2D &position,
+                                              const RotationRadian &rotation,
+                                              const Person::Stride &stride) {
+  return Position2D(position.x() + (stride * std::cos(rotation)),
+                    position.y() + (stride * std::sin(rotation)));
 }
 
 double Person::calculateDistanceCosts(const Position2D &group_center,
                                       Person::Stride stride) const {
-  auto ts = calculateTransactionalSegmentPosition(stride);
-  return std::pow(group_center.x() - ts.x(), 2) +
-         std::pow(group_center.y() - ts.y(), 2);
+  if (_pose.rotation()) {
+    auto ts = calculateTransactionalSegmentPosition(
+        _pose.position(), _pose.rotation().get(), stride);
+    return std::pow(group_center.x() - ts.x(), 2) +
+           std::pow(group_center.y() - ts.y(), 2);
+  } else { // calculate costs without knowing rotation
+    auto dist = (group_center - _pose.position())
+                    .norm(); // distance btw group and person
+    // return std::pow(dist - stride,2); // optimistic, person is oriented
+    // towards group
+    // return std::pow(dist + stride,2); // pessimistic, person is oriented away
+    // from group
+    return std::pow(dist, 2); // mean -> no assumption
+  }
 }
 
 double Person::calculateVisibilityCost(const Position2D &group_center,

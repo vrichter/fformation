@@ -38,19 +38,24 @@ public:
 
   /**
    * @brief calculateTransactionalSegmentPosition calculates the center of the
-   * transactional segment (TS) of the person.
+   * transactional segment (TS) of a person from position, rotation and stride.
    *
    * The transactional segment center of a person is assumed to be at the
    * distance of stride along its viewing direction.
    *
+   * @param position the center position of the person
+   * @param rotation the viewing angle of the person
    * @param stride the distance btw. a person and its TS. depends on the
    * actually used unit of scale and overall 'crowdedness' of the scene.
    * @return person-position + stride * viewing-direction
    */
-  Position2D calculateTransactionalSegmentPosition(Stride stride) const;
+  static Position2D
+  calculateTransactionalSegmentPosition(const Position2D &position,
+                                        const RotationRadian &rotation,
+                                        const Stride &stride);
 
-  constexpr static const RotationRadian visibilityAngleThreshold() {
-    return 0.75;
+  static const RotationRadian visibilityAngleThreshold() {
+    return RotationRadian(0.75);
   }
 
   /**
