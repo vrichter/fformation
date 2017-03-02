@@ -46,7 +46,7 @@ static Person readPerson(const Json &js) {
                    "Person data must be of size = 4. Got: " + js.dump());
   std::stringstream id;
   id << js[0];
-  return Person(id.str(), {{js[1], js[2]}, js[3]});
+  return Person(id.str(), {{js[1], js[2]}, fformation::OptionalRotationRadian(js[3])});
 }
 
 static Group readGroup(const Json &js) {
