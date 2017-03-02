@@ -33,6 +33,14 @@ public:
 
   double norm() const;
 
+  Position2D normalized() const {
+    return *this / norm();
+  }
+
+  Position2D perpendicular() const {
+    return Position2D(-_y,_x);
+  }
+
   virtual void serializeJson(std::ostream &out) const override {
     out << "{ \"x\": " << _x << ", \"y\": " << _y << " }";
   }
@@ -43,6 +51,14 @@ public:
 
   friend Position2D operator-(const Position2D &a, const Position2D &b) {
     return Position2D(a.x() - b.x(), a.y() - b.y());
+  }
+
+  friend Position2D operator/(const Position2D &a, const Coordinate &divisor) {
+    return Position2D(a.x() / divisor, a.y() / divisor);
+  }
+
+  friend Position2D operator*(const Position2D &a, const Coordinate &scale) {
+    return Position2D(a.x() * scale, a.y() * scale);
   }
 
 private:
