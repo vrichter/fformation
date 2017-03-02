@@ -95,6 +95,16 @@ static double sumCosts(const AssignmentCosts &costs, const double &mdl) {
   }
 }
 
+static Position2D calculateTransactionalSegmentPosition(const Person &person, const Person::Stride &stride){
+  if(person.pose().rotation()){
+    // use thepersons transactional space
+    return Person::calculateTransactionalSegmentPosition(person.pose().position(),person.pose().rotation().get(),stride);
+  } else {
+    // the mean of the persons possible ts-centers is its position
+    return person.pose().position();
+  }
+}
+
 static std::vector<Position2D> proposeNewCenters(
     const AssignmentCosts &costs, const std::vector<Position2D> &groups,
     const std::vector<Person> &persons, const Person::Stride &stride) {
@@ -107,7 +117,7 @@ static std::vector<Position2D> proposeNewCenters(
     auto result = groups;
     auto best_assignment = findBestAssignment(costs);
     const Person &max = persons[best_assignment.rbegin()->second.person_pos];
-    result.push_back(max.calculateTransactionalSegmentPosition(stride));
+    result.push_back(calculateTransactionalSegmentPosition(max,stride));
     return result;
   }
 }
@@ -257,7 +267,7 @@ static std::vector<Position2D> proposeLessCenters(
   if (groups.empty()) {
     // initially create a group for each person in the observation
     for (auto person : persons) {
-      centers.push_back(person.calculateTransactionalSegmentPosition(stride));
+      centers.push_back(calculateTransactionalSegmentPosition(person,stride));
     }
     return centers;
   } else {
