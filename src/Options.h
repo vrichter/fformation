@@ -20,6 +20,7 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <vector>
 
 namespace fformation {
 
@@ -93,6 +94,25 @@ private:
   T _min;
   T _max;
   Exclude _exclude;
+};
+
+template <typename T> class OneOf : public Validator<T> {
+public:
+  OneOf(const std::vector<T> &list, bool result = true)
+      : _list(list), _result(result) {}
+
+  virtual bool validate(T accept) const final {
+    for (auto i : _list) {
+      if (i == accept) {
+        return _result;
+      }
+    }
+    return !_result;
+  }
+
+private:
+  const std::vector<T> &_list;
+  bool _result;
 };
 
 } // namespace vaidators
