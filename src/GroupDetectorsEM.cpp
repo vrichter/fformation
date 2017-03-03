@@ -218,9 +218,7 @@ fformation::GroupDetectorGrow::detect(const Observation &observation) const {
       centers = new_centers;
       costs = new_costs;
       sum_costs = new_sum_costs;
-      std::cout << "costs dec " << sum_costs << std::endl;
     } else {
-      std::cout << "costs inc " << sum_costs << std::endl;
       break;
     }
   }
