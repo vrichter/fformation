@@ -29,7 +29,7 @@ typedef boost::optional<RotationRadian> OptionalRotationRadian;
 class Pose2D : public JsonSerializable {
 public:
   Pose2D(const Position2D &position = Position2D(0., 0.),
-         OptionalRotationRadian rotation_radian = 0.)
+         OptionalRotationRadian rotation_radian = OptionalRotationRadian(false,0.))
       : _position(position), _rotation_radian(rotation_radian) {}
 
   const Position2D &position() const { return _position; }
