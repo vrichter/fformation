@@ -56,7 +56,7 @@ public:
   virtual void serializeJson(std::ostream &out) const override;
 
 private:
-  const std::map<PersonId, Person> _persons;
+  std::map<PersonId, Person> _persons;
 };
 
 class IdGroup : public JsonSerializable {
