@@ -178,6 +178,22 @@ public:
 
   const bool hasOption(const Option::NameType &name) const;
   const Option &getOption(const Option::NameType &name) const throw(Exception);
+  const Option getOptionOr(const Option::NameType &name, const Option::ValueType &value) const;
+
+  template<typename T>
+  const T getValue(const Option::NameType &name, const validators::Validator<T> &validator = validators::Accept<T>()) const {
+    return getOption(name).validate(validator);
+  }
+
+  template<typename T>
+  const T getValueOr(const Option::NameType &name, T fallback, const validators::Validator<T> &validator=validators::Accept<T>()) const {
+    if(hasOption(name)){
+      return getOption(name).validate(validator);
+    } else {
+      validator.validate(fallback);
+      return fallback;
+    }
+  }
 
   static Options
   parseFromString(const std::string &options,

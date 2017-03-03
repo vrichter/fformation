@@ -92,6 +92,14 @@ const Option &Options::getOption(const Option::NameType &name) const
   }
 }
 
+const Option Options::getOptionOr(const Option::NameType &name, const Option::ValueType &value) const {
+  if(hasOption(name)){
+    return getOption(name);
+  } else {
+    return Option(name,value);
+  }
+}
+
 Options
 Options::parseFromString(const std::string &options,
                          const std::string &separator) throw(Exception) {
