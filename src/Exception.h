@@ -37,4 +37,9 @@ private:
   const std::string _what;
 };
 
+class NotImplementedException : public Exception {
+public:
+  NotImplementedException(const std::string &what) : Exception(what + " not implemented.") {}
+};
+
 } // namespace fformation
