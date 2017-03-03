@@ -27,6 +27,7 @@ namespace fformation {
 
 class Evaluation {
 public:
+
   Evaluation(const Features &features, const GroundTruth &ground_truth,
              const Settings &settings, const GroupDetector &detector,
              const Options &options = Options());
@@ -45,6 +46,7 @@ public:
 
 private:
   double _threshold = 2. / 3.;
+  Options _options;
   std::vector<Classification> _classifications;
   std::vector<Classification> _ground_truths;
   std::vector<ConfusionMatrix> _confusion_matrices;

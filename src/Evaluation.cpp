@@ -26,7 +26,8 @@ using fformation::Classification;
 Evaluation::Evaluation(const Features &features,
                        const GroundTruth &ground_truth,
                        const Settings &settings, const GroupDetector &detector,
-                       const Options &options) {
+                       const Options &options)
+    : _options(options) {
   // apply options
   if (options.hasOption("threshold")) {
     _threshold = options.getOption("threshold")
