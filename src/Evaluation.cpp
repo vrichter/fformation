@@ -30,7 +30,7 @@ Evaluation::Evaluation(const Features &features,
   // apply options
   if (options.hasOption("threshold")) {
     _threshold = options.getOption("threshold")
-                     .convertValue<double>(validators::MinMax<double>(0., 1.));
+                     .validate(validators::MinMax<double>(0., 1.));
   }
   // do the evaluation
   for (auto obs : features.observations()) {

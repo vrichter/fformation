@@ -23,6 +23,10 @@ using fformation::Option;
 using fformation::Options;
 using fformation::Exception;
 
+namespace fformation {
+template <> std::string Option::convertValue() const { return _value; }
+}
+
 class OptionParserException : public Exception {
 public:
   OptionParserException(const std::string &message)

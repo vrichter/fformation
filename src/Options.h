@@ -140,12 +140,16 @@ public:
   const ValueType &value() const { return _value; }
   const bool &has_value() const { return _has_value; }
 
-  template <typename T>
-  T convertValue(const validators::Validator<T> &validator =
-                     validators::Accept<T>()) const {
+  template <typename T> T convertValue() const {
     T result;
     std::stringstream str(_value);
     str >> result;
+    return result;
+  }
+
+  template <typename T>
+  T validate(const validators::Validator<T> &validator) const {
+    T result = convertValue<T>();
     if (!validator.validate(result)) {
       Exception("Cannot convert option '" + _name + "'='" + _value +
                 "' to a valid value.");

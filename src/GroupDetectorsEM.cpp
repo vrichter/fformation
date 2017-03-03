@@ -27,8 +27,8 @@ namespace fv = fformation::validators;
 
 fformation::GroupDetectorGrow::GroupDetectorGrow(const Options &options)
     : GroupDetector(options),
-      _mdl(options.getOption("mdl").convertValue<double>(fv::Min<double>(0.))),
-      _stride(options.getOption("stride").convertValue<double>(
+      _mdl(options.getOption("mdl").validate(fv::Min<double>(0.))),
+      _stride(options.getOption("stride").validate(
           fv::Min<double>(0.))) {}
 
 typedef size_t GroupNum;
@@ -283,8 +283,8 @@ static std::vector<Position2D> proposeLessCenters(
 
 fformation::GroupDetectorShrink::GroupDetectorShrink(const Options &options)
     : GroupDetector(options),
-      _mdl(options.getOption("mdl").convertValue<double>(fv::Min<double>(0.))),
-      _stride(options.getOption("stride").convertValue<double>(
+      _mdl(options.getOption("mdl").validate(fv::Min<double>(0.))),
+      _stride(options.getOption("stride").validate(
           fv::Min<double>(0.))) {}
 
 Classification
