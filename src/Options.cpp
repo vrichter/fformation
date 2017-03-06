@@ -27,6 +27,20 @@ namespace fformation {
 template <> std::string Option::convertValue() const { return _value; }
 }
 
+namespace fformation {
+template <> bool Option::convertValue() const {
+    if (_value == "" ||
+        _value == "true" ||
+        _value == "True" ||
+        _value == "TRUE"
+        ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
 class OptionParserException : public Exception {
 public:
   OptionParserException(const std::string &message)
