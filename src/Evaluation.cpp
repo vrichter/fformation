@@ -17,6 +17,7 @@
 
 #include "Evaluation.h"
 #include <assert.h>
+#include <iostream>
 
 using fformation::Evaluation;
 using fformation::ConfusionMatrix;
@@ -154,11 +155,16 @@ Evaluation::Evaluation(const Features &features,
   for (auto obs : features.observations()) {
     const Classification *gt = ground_truth.findClassification(obs.timestamp());
     if (gt != nullptr) {
-      auto observation = modifyObservation(obs, *gt, options);
-      _ground_truths.push_back(*gt);
-      _classifications.push_back(detector.detect(observation));
-      _confusion_matrices.push_back(
-          _classifications.back().createConfusionMatrix(*gt, _threshold));
+      try {
+        auto observation = modifyObservation(obs, *gt, options);
+        auto cl = detector.detect(observation);
+        auto cf = cl.createConfusionMatrix(*gt,_threshold);
+        _ground_truths.push_back(*gt);
+        _classifications.push_back(cl);
+        _confusion_matrices.push_back(cf);
+      } catch (const Exception &e) {
+        std::cerr << "Classification failed: " << e.what() << std::endl;
+      }
     }
   }
 }
