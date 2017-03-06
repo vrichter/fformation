@@ -202,7 +202,7 @@ Group::find_persons(std::set<PersonId> person_ids) const {
     auto it = _persons.find(id);
     if (it == _persons.end()) {
       std::stringstream str;
-      str << "Person with id" << id << " could not be found";
+      str << "Person with id " << id << " could not be found.";
       throw Exception(str.str());
     }
     result.insert({id, _persons.find(id)->second});
