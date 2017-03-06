@@ -109,5 +109,5 @@ int main(const int argc, const char **args) {
   Evaluation evaluation(features, groundtruth, settings, *detector.get(),
                         Options::parseFromString(
                             program_options["evaluation"].as<std::string>()));
-  evaluation.printMatlabOutput(std::cout, true);
+  evaluation.printMatlabOutput(std::cout);
 }

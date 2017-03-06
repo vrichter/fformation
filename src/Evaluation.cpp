@@ -169,9 +169,9 @@ Evaluation::Evaluation(const Features &features,
   }
 }
 
-static std::ostream &printMatlab(const Classification &cl, std::ostream &out) {
+static std::ostream &printMatlab(const Classification &cl, std::ostream &out, bool all=false) {
   for (auto group : cl.idGroups()) {
-    if (group.persons().size() <= 1)
+    if (group.persons().size() <= 1 && !all)
       continue;
     for (auto person : group.persons()) {
       out << " " << person;
@@ -185,19 +185,28 @@ static bool perfectMatch(const ConfusionMatrix &m) {
   return m.false_negative() == 0 && m.false_positive() == 0;
 }
 
-const std::ostream &Evaluation::printMatlabOutput(std::ostream &out,
-                                                  bool print_matches) const {
+const std::ostream &Evaluation::printMatlabOutput(std::ostream &out) const {
+  bool print_perfect_matches = _options.getValueOr<bool>("print_perfect_matches",true);
+  bool print_all_persons = _options.getValueOr<bool>("print_all_persons",false);
+  bool print_confusion_matrix = _options.getValueOr<bool>("print_confusion_matrix",false);
   assert(_classifications.size() == _confusion_matrices.size());
   assert(_ground_truths.size() == _confusion_matrices.size());
   for (size_t frame = 0; frame < _classifications.size(); ++frame) {
-    if (print_matches || !perfectMatch(_confusion_matrices[frame])) {
+    if (print_perfect_matches || !perfectMatch(_confusion_matrices[frame])) {
       out << "Frame: " << frame + 1 << "/" << _classifications.size() << "\n";
       out << "   FOUND:-- ";
-      printMatlab(_classifications[frame], out);
+      printMatlab(_classifications[frame], out, print_all_persons);
       out << "\n";
       out << "   GT   :-- ";
-      printMatlab(_ground_truths[frame], out);
+      printMatlab(_ground_truths[frame], out, print_all_persons);
       out << "\n";
+      if(print_confusion_matrix){
+        out << "     TP: " << _confusion_matrices[frame].true_positive() << "\n"
+            << "     FP: " << _confusion_matrices[frame].false_positive() << "\n"
+            << "     TN: " << _confusion_matrices[frame].true_negative() << "\n"
+            << "     FN: " << _confusion_matrices[frame].false_negative() << "\n"
+            << "\n";
+      }
     }
   }
   auto precision = ConfusionMatrix::calculateMeanPrecision(_confusion_matrices);
