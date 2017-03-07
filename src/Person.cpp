@@ -59,6 +59,11 @@ double Person::calculateVisibilityCost(const Position2D &group_center,
   if (_id == other.id()) {
     return 0.; // same person
   }
+  if (group_center.x() == other.pose().position().x() &&
+      group_center.y() == other.pose().position().y()){
+    // center is created from only others position.
+    return  0.;
+  }
   auto this_vector = group_center - pose().position();
   auto this_distance = this_vector.norm();
   auto other_vector = group_center - other.pose().position();

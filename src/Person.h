@@ -97,6 +97,12 @@ public:
    * Instead of the original formula from the paper:
    * \f[ R = exp(K cos(\theta_{i,j}^g)) \frac{d_i^g-d_j^g}{d_j^g} \f]
    *
+   * Edge case: if the center position is _exactly_ the position of other, we
+   * assume that
+   * the center was created from only this persons position. A combined center
+   * would be very different so we return a small cost
+   * instead of theotherwise very high cost.
+   *
    * @param group_center the assumed center of a group this person may be in.
    * @param other the other person. not necessarily in the same group.
    * @return the cost of the occlusion produced by other btw. this and
@@ -105,6 +111,7 @@ public:
    *         * 0. if other farther away from center than this
    *         * 0. if the cos of the angle btw. this and other rel. to the center
    *           is bigger than 0.75 radians.
+   *         * 0. if group_center == other.pose().position()
    *         * a cost value depending on the angles btw. the persons and their
    *           distancces to the group center
    */
