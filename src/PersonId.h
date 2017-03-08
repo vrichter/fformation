@@ -17,6 +17,7 @@
 
 #pragma once
 #include "JsonSerializable.h"
+#include <sstream>
 
 namespace fformation {
 
@@ -35,6 +36,13 @@ public:
   }
 
   virtual void serializeJson(std::ostream &out) const override { out << _id; }
+
+  template<typename T>
+  static PersonId from(T data){
+    std::stringstream str;
+    str << data;
+    return PersonId(PersonIdType(str.str()));
+  }
 
 private:
   PersonIdType _id;
