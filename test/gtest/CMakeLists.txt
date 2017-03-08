@@ -24,6 +24,8 @@ if (COMMAND pre_project_set_up_hermetic_build)
   pre_project_set_up_hermetic_build()
 endif()
 
+cmake_policy(SET CMP0048 NEW)
+
 # project name
 project(gtest CXX C)
 cmake_minimum_required(VERSION 2.6.2)
