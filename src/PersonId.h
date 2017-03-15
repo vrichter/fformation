@@ -37,11 +37,17 @@ public:
 
   virtual void serializeJson(std::ostream &out) const override { out << _id; }
 
-  template<typename T>
-  static PersonId from(T data){
+  template <typename T> static PersonId from(T data) {
     std::stringstream str;
     str << data;
     return PersonId(PersonIdType(str.str()));
+  }
+
+  template <typename T> T as() {
+    std::stringstream str(_id);
+    T result;
+    result << str;
+    return result;
   }
 
 private:
