@@ -183,6 +183,13 @@ public:
   const bool hasOption(const Option::NameType &name) const;
   const Option &getOption(const Option::NameType &name) const throw(Exception);
   const Option getOptionOr(const Option::NameType &name, const Option::ValueType &value) const;
+  template<typename T>
+  bool addIfMissing(const std::string& name, T value){
+    if(!hasOption(name)){
+      return this->insert(Option::fromValue(name,value));
+    }
+    return false;
+  }
 
   template<typename T>
   const T getValue(const Option::NameType &name, const validators::Validator<T> &validator = validators::Accept<T>()) const {
