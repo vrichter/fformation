@@ -46,7 +46,7 @@ public:
   template <typename T> T as() {
     std::stringstream str(_id);
     T result;
-    result << str;
+    str >> result;
     return result;
   }
 
