@@ -157,7 +157,7 @@ public:
     return result;
   }
 
-  template <typename T> ValueType fromValue(const T value) {
+  template <typename T> static ValueType fromValue(const T value) {
     std::stringstream str;
     str << value;
     return str.str();
