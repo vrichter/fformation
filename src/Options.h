@@ -186,7 +186,7 @@ public:
   template<typename T>
   bool addIfMissing(const std::string& name, T value){
     if(!hasOption(name)){
-      return this->insert(Option::fromValue(name,value));
+      return (this->insert(Option::fromValue(name,value))).second;
     }
     return false;
   }
