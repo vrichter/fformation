@@ -42,7 +42,7 @@ static std::set<PersonId> persons(const std::vector<size_t> ids) {
 }
 
 static IdGroup group(const std::vector<size_t> &ids) {
-  return IdGroup({{persons({ids})}});
+  return IdGroup(persons(ids));
 }
 
 static Classification ccl(const std::vector<std::vector<size_t>> &data,
