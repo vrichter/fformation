@@ -65,7 +65,8 @@ SOFTWARE.
 #elif defined(__GNUC__)
     #define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
     #if GCC_VERSION < 40900
-        #error "unsupported GCC version - see https://github.com/nlohmann/json#supported-compilers"
+        #warning "unsupported GCC version - see https://github.com/nlohmann/json#supported-compilers"
+        #warning "reading and writing json documents may not work properly"
     #endif
 #endif
 
