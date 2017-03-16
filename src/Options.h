@@ -163,6 +163,10 @@ public:
     return str.str();
   }
 
+  template <typename T> static Option fromValue(const std::string& name, const T value) {
+    return Option(name,fromValue(value));
+  }
+
 private:
   NameType _name;
   ValueType _value;
