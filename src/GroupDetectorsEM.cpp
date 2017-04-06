@@ -151,7 +151,7 @@ static AssignmentCosts optimizeCenters(std::vector<Position2D> &centers,
                                        const Person::Stride &stride) {
   auto assign = calculateAssignmentCosts(persons, centers, stride);
   auto best_assign = findBestAssignment(assign);
-  double costs = std::numeric_limits<double>::max();
+  double costs = sumCosts(best_assign,0.);
   while (true) {
     // E
     auto new_centers = updateCenters(centers, persons, best_assign, stride);
