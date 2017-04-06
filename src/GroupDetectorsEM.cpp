@@ -112,8 +112,7 @@ static std::vector<Position2D> proposeNewCenters(
     // initially create a mean group center for a single group
     return {fformation::Group::calculateCenter(persons, stride)};
   } else {
-    // just add a new group for the max-cost person if the cost is higher than
-    // mdl
+    // just add a new group for the max-cost person
     auto result = groups;
     auto best_assignment = findBestAssignment(costs);
     const Person &max = persons[best_assignment.rbegin()->second.person_pos];
