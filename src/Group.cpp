@@ -19,6 +19,7 @@
 #include "Exception.h"
 #include <cmath>
 #include <cstring>
+#include <iostream>
 #include <sstream>
 
 using fformation::Group;
@@ -85,9 +86,10 @@ calculatePairwiseCenters(const Person &a, const Person &b,
     // no rotation information available
     auto aPos = a.pose().position();
     auto bPos = b.pose().position();
-    auto dist = (aPos - bPos).norm();
-    auto center_btw_persons = aPos + ((aPos - bPos) / 2);
-    if (dist >= stride) {
+    auto dirAB = (bPos - aPos);
+    auto dist = dirAB.norm();
+    auto center_btw_persons = aPos + (dirAB.normalized() * (dist / 2));
+    if (dist >= stride*2) {
       // propose center btw them
       result.push_back(center_btw_persons);
     } else {
@@ -95,7 +97,7 @@ calculatePairwiseCenters(const Person &a, const Person &b,
       // the persons
       auto h = std::sqrt(std::pow(stride, 2) - std::pow(dist / 2, 2));
       // the vector pointing from a to the center, length = 1
-      auto dist_dir = (aPos - bPos).normalized();
+      auto dist_dir = dirAB.normalized();
       // the vertical direction (90deg rotated) relative to the line btw the
       // persons
       auto h_dir = dist_dir.perpendicular();
@@ -176,7 +178,7 @@ Position2D Group::calculateCenter(const std::vector<Person> &persons,
   }
   // default case
   auto pairwise_centers = calculatePairwiseCenters(persons, stride);
-  auto center = boost::make_optional<Position2D>(false,Position2D(0.,0.));
+  auto center = boost::make_optional<Position2D>(false, Position2D(0., 0.));
   double costs = std::numeric_limits<double>::max();
   while (true) {
     auto new_center_costs =
