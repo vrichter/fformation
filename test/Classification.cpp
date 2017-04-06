@@ -2,7 +2,7 @@
 **                                                                 **
 ** Copyright (C) 2014 Viktor Richter                               **
 **                                                                 **
-** File   : test/io/Classification.cpp                             **
+** File   : test/Classification.cpp                                **
 ** Authors: Viktor Richter                                         **
 **                                                                 **
 **                                                                 **

@@ -2,7 +2,7 @@
 **                                                                 **
 ** Copyright (C) 2014 Viktor Richter                               **
 **                                                                 **
-** File   : test/io/GroupDetectorFactory.cpp                       **
+** File   : test/GroupDetectorFactory.cpp                          **
 ** Authors: Viktor Richter                                         **
 **                                                                 **
 **                                                                 **

@@ -2,7 +2,7 @@
 **                                                                 **
 ** Copyright (C) 2014 Viktor Richter                               **
 **                                                                 **
-** File   : test/io/ConfusionMatrix.cpp                            **
+** File   : test/ConfusionMatrix.cpp                               **
 ** Authors: Viktor Richter                                         **
 **                                                                 **
 **                                                                 **

@@ -2,7 +2,7 @@
 **                                                                 **
 ** Copyright (C) 2014 Viktor Richter                               **
 **                                                                 **
-** File   : test/io/Options.cpp                                    **
+** File   : test/Options.cpp                                       **
 ** Authors: Viktor Richter                                         **
 **                                                                 **
 **                                                                 **
