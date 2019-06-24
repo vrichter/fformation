@@ -32,7 +32,8 @@ public:
 
   ConfusionMatrix(IntType true_positive, IntType false_positive,
                   IntType true_negative, IntType false_negative)
-      : _data({true_positive, false_positive, true_negative, false_negative}) {}
+      : _data(
+            {{true_positive, false_positive, true_negative, false_negative}}) {}
 
   ConfusionMatrix(const std::array<IntType, 4> &data) : _data(data) {}
 
