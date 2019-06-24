@@ -36,11 +36,27 @@ Classification::Classification(Timestamp timestamp,
   }
 }
 
-std::vector<Group>
-Classification::createGroups(const Observation &observation) const {
+std::vector<Group> Classification::createGroups(const Observation &observation,
+                                                bool singular) const {
   std::vector<Group> result;
   result.reserve(_groups.size());
-  for (auto group : _groups) {
+  std::vector<IdGroup> id_groups = _groups;
+  if (singular) {
+    for (auto person_it : observation.group().persons()) {
+      auto id = person_it.first;
+      bool found = false;
+      for (auto id_group : id_groups) {
+        if (id_group.has_person(id)) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        id_groups.push_back({{id}});
+      }
+    }
+  }
+  for (auto group : id_groups) {
     result.push_back(Group(observation.group().find_persons(group.persons())));
   }
   return result;

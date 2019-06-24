@@ -42,7 +42,8 @@ public:
 
   const std::vector<IdGroup> &idGroups() const { return _groups; }
 
-  std::vector<Group> createGroups(const Observation &observation) const;
+  std::vector<Group> createGroups(const Observation &observation,
+                                  bool singular = false) const;
 
   /**
    * @brief calculateDistanceCosts the sum of distance costs of the contained
