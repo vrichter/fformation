@@ -28,8 +28,7 @@ namespace fv = fformation::validators;
 fformation::GroupDetectorGrow::GroupDetectorGrow(const Options &options)
     : GroupDetector(options),
       _mdl(options.getOption("mdl").validate(fv::Min<double>(0.))),
-      _stride(options.getOption("stride").validate(
-          fv::Min<double>(0.))) {}
+      _stride(options.getOption("stride").validate(fv::Min<double>(0.))) {}
 
 typedef size_t GroupNum;
 typedef size_t PersonNum;
@@ -88,17 +87,20 @@ static double sumCosts(const AssignmentCosts &costs, const double &mdl) {
     sum += it.first;
     groups.insert(it.second.group_pos);
   }
-  if(groups.empty()){
+  if (groups.empty()) {
     return std::numeric_limits<double>::max();
   } else {
     return sum + double(groups.size()) * mdl;
   }
 }
 
-static Position2D calculateTransactionalSegmentPosition(const Person &person, const Person::Stride &stride){
-  if(person.pose().rotation()){
+static Position2D
+calculateTransactionalSegmentPosition(const Person &person,
+                                      const Person::Stride &stride) {
+  if (person.pose().rotation()) {
     // use thepersons transactional space
-    return Person::calculateTransactionalSegmentPosition(person.pose().position(),person.pose().rotation().get(),stride);
+    return Person::calculateTransactionalSegmentPosition(
+        person.pose().position(), person.pose().rotation().get(), stride);
   } else {
     // the mean of the persons possible ts-centers is its position
     return person.pose().position();
@@ -116,7 +118,7 @@ static std::vector<Position2D> proposeNewCenters(
     auto result = groups;
     auto best_assignment = findBestAssignment(costs);
     const Person &max = persons[best_assignment.rbegin()->second.person_pos];
-    result.push_back(calculateTransactionalSegmentPosition(max,stride));
+    result.push_back(calculateTransactionalSegmentPosition(max, stride));
     return result;
   }
 }
@@ -151,7 +153,7 @@ static AssignmentCosts optimizeCenters(std::vector<Position2D> &centers,
                                        const Person::Stride &stride) {
   auto assign = calculateAssignmentCosts(persons, centers, stride);
   auto best_assign = findBestAssignment(assign);
-  double costs = sumCosts(best_assign,0.);
+  double costs = sumCosts(best_assign, 0.);
   while (true) {
     // E
     auto new_centers = updateCenters(centers, persons, best_assign, stride);
@@ -240,15 +242,16 @@ static GroupNum findLeastCostIncrease(const AssignmentCosts &costs,
           it2->second.person_pos == it.second.person_pos) {
         // assignment of the same person to another group with second best costs
         // because of AssignmentCosts sorting.
-        group_move_costs[it.second.group_pos] += (it2->second.costs - it.second.costs);
+        group_move_costs[it.second.group_pos] +=
+            (it2->second.costs - it.second.costs);
         break;
       }
     }
   }
   GroupNum least = 0;
   double least_cost = group_move_costs.front();
-  for(GroupNum g = 0; g < group_move_costs.size(); ++g){
-    if(group_move_costs[g] < least_cost){
+  for (GroupNum g = 0; g < group_move_costs.size(); ++g) {
+    if (group_move_costs[g] < least_cost) {
       least = g;
       least_cost = group_move_costs[g];
     }
@@ -264,11 +267,11 @@ static std::vector<Position2D> proposeLessCenters(
   if (groups.empty()) {
     // initially create a group for each person in the observation
     for (auto person : persons) {
-      centers.push_back(calculateTransactionalSegmentPosition(person,stride));
+      centers.push_back(calculateTransactionalSegmentPosition(person, stride));
     }
     return centers;
   } else {
-    GroupNum remove_group = findLeastCostIncrease(costs,groups.size());
+    GroupNum remove_group = findLeastCostIncrease(costs, groups.size());
     for (GroupNum i = 0; i < groups.size(); ++i) {
       if (i != remove_group) {
         centers.push_back(groups[i]);
@@ -281,8 +284,7 @@ static std::vector<Position2D> proposeLessCenters(
 fformation::GroupDetectorShrink::GroupDetectorShrink(const Options &options)
     : GroupDetector(options),
       _mdl(options.getOption("mdl").validate(fv::Min<double>(0.))),
-      _stride(options.getOption("stride").validate(
-          fv::Min<double>(0.))) {}
+      _stride(options.getOption("stride").validate(fv::Min<double>(0.))) {}
 
 Classification
 fformation::GroupDetectorShrink::detect(const Observation &observation) const {
