@@ -66,7 +66,8 @@ int main(const int argc, const char **args) {
   desc.add_options()(
       "evaluation,e",
       boost::program_options::value<std::string>()->default_value(
-          "threshold=0.6666@modify_rotations=keep@modify_proportion=0.75@seed=0"),
+          "threshold=0.6666@modify_rotations=keep@modify_proportion=0.75@seed="
+          "0"),
       "May be used to override evaluation settings and default settings "
       "from settings.json");
   desc.add_options()(
@@ -109,5 +110,5 @@ int main(const int argc, const char **args) {
   Evaluation evaluation(features, groundtruth, settings, *detector.get(),
                         Options::parseFromString(
                             program_options["evaluation"].as<std::string>()));
-  evaluation.printMatlabOutput(std::cout);
+  evaluation.printOutput(std::cout);
 }

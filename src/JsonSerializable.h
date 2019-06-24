@@ -27,7 +27,6 @@ public:
 
   virtual void print(std::ostream &out) const final { serializeJson(out); }
 
-protected:
   template <typename T>
   static void serializeIterable(std::ostream &out, const T &iterable) {
     if (iterable.begin() == iterable.end()) {

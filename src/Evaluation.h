@@ -27,7 +27,6 @@ namespace fformation {
 
 class Evaluation {
 public:
-
   Evaluation(const Features &features, const GroundTruth &ground_truth,
              const Settings &settings, const GroupDetector &detector,
              const Options &options = Options());
@@ -41,14 +40,17 @@ public:
   const std::vector<ConfusionMatrix> confusionMatrices() const {
     return _confusion_matrices;
   }
-  const std::ostream &printMatlabOutput(std::ostream &out) const;
+  const std::ostream &printOutput(std::ostream &out) const;
 
 private:
   double _threshold = 2. / 3.;
   Options _options;
+  std::vector<Observation> _observations;
   std::vector<Classification> _classifications;
   std::vector<Classification> _ground_truths;
   std::vector<ConfusionMatrix> _confusion_matrices;
+  std::map<std::string, std::function<const std::ostream &(std::ostream &)>>
+      _printers;
 };
 
 } // namespace fformation
