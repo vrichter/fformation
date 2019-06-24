@@ -44,9 +44,16 @@ static Person readPerson(const Json &js) {
                    "Person data must be an array. Got: " + js.dump());
   Exception::check(js.size() == 4,
                    "Person data must be of size = 4. Got: " + js.dump());
-  std::stringstream id;
-  id << js[0];
-  return Person(id.str(), {{js[1], js[2]}, fformation::OptionalRotationRadian(js[3])});
+  std::string id = "";
+  if (js[0].is_number()) {
+    std::stringstream ids;
+    ids << js[0];
+    id = ids.str();
+  } else if (js[0].is_string()) {
+    id = js[0].get<std::string>();
+  }
+  return Person(id,
+                {{js[1], js[2]}, fformation::OptionalRotationRadian(js[3])});
 }
 
 static Group readGroup(const Json &js) {

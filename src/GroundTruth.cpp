@@ -40,10 +40,16 @@ static std::vector<IdGroup> readGroups(const Json &js) {
     Exception::check(group.is_array(), "Array expected. Got: " + group.dump());
     std::set<PersonId> persons;
     for (auto pid : group) {
-      double val = pid.get<double>();
-      std::stringstream str;
-      str << val;
-      persons.insert(PersonId(str.str()));
+      if (pid.is_number()) {
+        double val = pid.get<double>();
+        std::stringstream str;
+        str << val;
+        persons.insert(PersonId(str.str()));
+      } else if (pid.is_string()) {
+        persons.insert(PersonId(pid.get<std::string>()));
+      } else {
+        throw Exception("Person id type must be string or numeric.");
+      }
     }
     result.push_back(persons);
   }
