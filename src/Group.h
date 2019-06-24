@@ -40,6 +40,10 @@ public:
 
   std::map<PersonId, Person> find_persons(std::set<PersonId> person_ids) const;
 
+  bool has_person(const PersonId id) const {
+    return _persons.find(id) != _persons.end();
+  }
+
   std::vector<Person> generatePersonList() const;
 
   /**
@@ -64,6 +68,10 @@ public:
   IdGroup(const std::set<PersonId> &persons) : _persons(persons){};
 
   const std::set<PersonId> &persons() const { return _persons; }
+
+  bool has_person(const PersonId id) const {
+    return _persons.find(id) != _persons.end();
+  }
 
   virtual void serializeJson(std::ostream &out) const override {
     serializeIterable(out, _persons);
