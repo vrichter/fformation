@@ -29,16 +29,13 @@ template <> std::string Option::convertValue() const { return _value; }
 
 namespace fformation {
 template <> bool Option::convertValue() const {
-    if (_value == "" ||
-        _value == "true" ||
-        _value == "True" ||
-        _value == "TRUE"
-        ) {
-      return true;
-    } else {
-      return false;
-    }
+  if (_value == "1" || _value == "true" || _value == "True" ||
+      _value == "TRUE") {
+    return true;
+  } else {
+    return false;
   }
+}
 }
 
 class OptionParserException : public Exception {
@@ -106,11 +103,12 @@ const Option &Options::getOption(const Option::NameType &name) const
   }
 }
 
-const Option Options::getOptionOr(const Option::NameType &name, const Option::ValueType &value) const {
-  if(hasOption(name)){
+const Option Options::getOptionOr(const Option::NameType &name,
+                                  const Option::ValueType &value) const {
+  if (hasOption(name)) {
     return getOption(name);
   } else {
-    return Option(name,value);
+    return Option(name, value);
   }
 }
 
