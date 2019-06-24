@@ -31,6 +31,10 @@ public:
     return lhs._id == rhs._id;
   }
 
+  friend bool operator!=(const PersonId &lhs, const PersonId &rhs) {
+    return lhs._id != rhs._id;
+  }
+
   friend bool operator<(const PersonId &lhs, const PersonId &rhs) {
     return lhs._id < rhs._id;
   }
