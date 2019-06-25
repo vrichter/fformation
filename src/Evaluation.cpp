@@ -268,16 +268,63 @@ static const std::ostream &printTsvParticipantsOutput(
     ConfusionMatrix::IntType tn = 0;
     ConfusionMatrix::IntType fn = 0;
     for (auto person : persons_in_frame) {
-      if (person.id() != pid) {
-        bool in_cl = cl.persons().find(person.id()) != cl.persons().end();
-        bool in_an = an.persons().find(person.id()) != an.persons().end();
-        tp += (in_cl & in_an) ? 1 : 0;
-        fp += (in_cl & !in_an) ? 1 : 0;
-        tn += (!in_cl & !in_an) ? 1 : 0;
-        fn += (!in_cl & in_an) ? 1 : 0;
-      }
+      // if (person.id() != pid) {
+      bool in_cl = cl.persons().find(person.id()) != cl.persons().end();
+      bool in_an = an.persons().find(person.id()) != an.persons().end();
+      tp += (in_cl & in_an) ? 1 : 0;
+      fp += (in_cl & !in_an) ? 1 : 0;
+      tn += (!in_cl & !in_an) ? 1 : 0;
+      fn += (!in_cl & in_an) ? 1 : 0;
+      //}
     }
     return ConfusionMatrix(tp, fp, tn, fn);
+  };
+  // create groups while ignoring persons missing from observation
+  auto generate_group_lists = [](const Classification &cl,
+                                 const Observation &ob) -> std::vector<Group> {
+    std::vector<Group> result;
+    for (auto idg : cl.idGroups()) {
+      std::vector<Person> persons;
+      for (auto pid : idg.persons()) {
+        auto it = ob.group().persons().find(pid);
+        if (it != ob.group().persons().end()) {
+          persons.push_back(it->second);
+        }
+      }
+      if (!persons.empty()) {
+        result.push_back(Group(persons));
+      }
+    }
+    for (auto it : ob.group().persons()) {
+      auto pid = it.first;
+      auto person = it.second;
+      bool found = false;
+      for (auto g : result) {
+        if (g.has_person(pid)) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        result.push_back(Group(std::vector<Person>({person})));
+      }
+    }
+    return result;
+  };
+  // counts the persons that are in ground truth but not in observation
+  auto missing_persons = [](const PersonId &pid, const Classification &gt,
+                            const Observation &ob) -> size_t {
+    size_t result = 0;
+    for (auto idg : gt.idGroups()) {
+      if (idg.has_person(pid)) {
+        for (auto group_participant_id : idg.persons()) {
+          if (!ob.group().has_person(group_participant_id)) {
+            ++result;
+          }
+        }
+      }
+    }
+    return result;
   };
   auto stride = detector_options.getValue<Person::Stride>("stride");
   auto mdl = detector_options.getValue<Person::Stride>("mdl");
@@ -292,24 +339,25 @@ static const std::ostream &printTsvParticipantsOutput(
     const Classification &cl = classifications[frame];
     const auto person_list = obs.group().generatePersonList();
     const auto ts = classifications[frame].timestamp();
+    const auto gt_groups = generate_group_lists(gt, obs);
+    const auto cl_groups = generate_group_lists(cl, obs);
     for (auto person : person_list) {
       out << ts << s;
       out << person.id() << s;
       out << person.pose().position().x() << s;
       out << person.pose().position().y() << s;
       out << person.pose().rotation() << s;
-      const Group &gt_group =
-          persons_group(person.id(), gt.createGroups(obs, true));
-      const Group &cl_group =
-          persons_group(person.id(), cl.createGroups(obs, true));
-      out << gt_group.persons().size() << s;
+      const Group &gt_group = persons_group(person.id(), gt_groups);
+      const size_t missing = missing_persons(person.id(), gt, obs);
+      const Group &cl_group = persons_group(person.id(), cl_groups);
+      out << gt_group.persons().size() + missing << s;
       out << cl_group.persons().size() << s;
       const ConfusionMatrix pcm =
           persons_cm(person.id(), person_list, cl_group, gt_group);
       out << pcm.true_positive() << s;
       out << pcm.false_positive() << s;
       out << pcm.true_negative() << s;
-      out << pcm.false_negative() << s;
+      out << pcm.false_negative() + missing << s;
       auto gc = gt_group.calculateCenter(stride);
       out << person.calculateDistanceCosts(gc, stride) << s;
       auto cl_group_participants = cl_group.generatePersonList();
