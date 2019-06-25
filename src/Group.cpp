@@ -89,7 +89,7 @@ calculatePairwiseCenters(const Person &a, const Person &b,
     auto dirAB = (bPos - aPos);
     auto dist = dirAB.norm();
     auto center_btw_persons = aPos + (dirAB.normalized() * (dist / 2));
-    if (dist >= stride*2) {
+    if (dist >= stride * 2) {
       // propose center btw them
       result.push_back(center_btw_persons);
     } else {
