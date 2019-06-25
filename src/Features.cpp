@@ -42,8 +42,10 @@ static FoV readFov(const Json &js) {
 static Person readPerson(const Json &js) {
   Exception::check(js.is_array(),
                    "Person data must be an array. Got: " + js.dump());
-  Exception::check(js.size() == 4,
-                   "Person data must be of size = 4. Got: " + js.dump());
+  Exception::check(js.size() >= 3,
+                   "Person data must be of size >= 3. Got: " + js.dump());
+  Exception::check(js.size() <= 4,
+                   "Person data must be of size <= 4. Got: " + js.dump());
   std::string id = "";
   if (js[0].is_number()) {
     std::stringstream ids;
@@ -52,8 +54,13 @@ static Person readPerson(const Json &js) {
   } else if (js[0].is_string()) {
     id = js[0].get<std::string>();
   }
-  return Person(id,
-                {{js[1], js[2]}, fformation::OptionalRotationRadian(js[3])});
+  auto x = fformation::Position2D::Coordinate(js[1]);
+  auto y = fformation::Position2D::Coordinate(js[2]);
+  auto r = fformation::OptionalRotationRadian();
+  if (js.size() == 4) {
+    r = fformation::OptionalRotationRadian(js[3]);
+  }
+  return Person(id, {{x, y}, r});
 }
 
 static Group readGroup(const Json &js) {
