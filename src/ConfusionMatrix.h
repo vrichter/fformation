@@ -105,6 +105,13 @@ public:
                             calculateMeanRecall(matrices));
   }
 
+  friend ConfusionMatrix operator+(const ConfusionMatrix &a,
+                                   const ConfusionMatrix &b) {
+    return ConfusionMatrix(std::array<IntType, 4>(
+        {{a._data[0] + b._data[0], a._data[1] + b._data[1],
+          a._data[2] + b._data[2], a._data[3] + b._data[3]}}));
+  }
+
 private:
   /**
    * @brief _data contains tp,fp,tn,fn
