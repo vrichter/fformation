@@ -366,7 +366,7 @@ static const std::ostream &printTsvParticipantsOutput(
         visibility_cost +=
             person.calculateVisibilityCost(gc, group_participant);
       }
-      out << visibility_cost << s << mdl << s << stride << s << "\n";
+      out << visibility_cost << s << mdl << s << stride << "\n";
     }
   }
   return out;
