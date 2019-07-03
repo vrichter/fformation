@@ -48,6 +48,7 @@ void Group::serializeJson(std::ostream &out) const {
   serializeMapAsVector(out, _persons);
 }
 
+#if 0
 static Position2D calculateCenter(const Position2D &a_pos,
                                   const RotationRadian &a_rot,
                                   const Position2D &b_pos,
@@ -192,6 +193,30 @@ Position2D Group::calculateCenter(const std::vector<Person> &persons,
   }
   return center.get();
 }
+#else
+static Position2D calculateTS(const Person &p, Person::Stride stride) {
+  if (p.pose().rotation()) {
+    return Person::calculateTransactionalSegmentPosition(
+        p.pose().position(), p.pose().rotation().get(), stride);
+  } else {
+    return p.pose().position();
+  }
+}
+Position2D Group::calculateCenter(const std::vector<Person> &persons,
+                                  Person::Stride stride) {
+  // edge cases
+  if (persons.empty()) {
+    throw Exception("Cannot calculate center of an empty group.");
+  }
+  Position2D result(0., 0.);
+  for (auto p : persons) {
+    auto ppos = calculateTS(p, stride);
+    result = result + ppos;
+  }
+  result = result / persons.size();
+  return result;
+}
+#endif
 
 Position2D Group::calculateCenter(Person::Stride stride) const {
   return calculateCenter(generatePersonList(), stride);
