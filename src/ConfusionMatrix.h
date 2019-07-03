@@ -43,12 +43,25 @@ public:
   const IntType &false_negative() const { return _data.at(3); }
   const std::array<IntType, 4> &data() const { return _data; }
 
+  const IntType condition_positive() const {
+    return true_positive() + false_negative();
+  }
+  const IntType condition_negative() const {
+    return false_positive() + true_negative();
+  }
+  const IntType predicted_positive() const {
+    return true_positive() + false_positive();
+  }
+  const IntType predicted_negative() const {
+    return true_negative() + false_negative();
+  }
+
   RealType calculatePrecision() const {
     if (true_positive() + false_positive() == 0) {
       return 1.;
     }
     return static_cast<RealType>(true_positive()) /
-           static_cast<RealType>(true_positive() + false_positive());
+           static_cast<RealType>(predicted_positive());
   }
 
   RealType calculateRecall() const {
@@ -59,6 +72,27 @@ public:
            static_cast<RealType>(true_positive() + false_negative());
   }
 
+  RealType calculateInformedness() const {
+    return static_cast<RealType>(true_positive()) /
+               static_cast<RealType>(condition_positive()) -
+           static_cast<RealType>(false_positive()) /
+               static_cast<RealType>(condition_negative());
+  }
+
+  RealType calculateMarkedness() const {
+    return static_cast<RealType>(true_positive()) /
+               static_cast<RealType>(predicted_positive()) -
+           static_cast<RealType>(false_negative()) /
+               static_cast<RealType>(predicted_negative());
+  }
+
+  static RealType calculateFBetaScore(const RealType precision,
+                                      const RealType recall,
+                                      const RealType beta) {
+    return (1 + beta * beta) * (precision * recall) /
+           ((beta * beta * precision) + recall);
+  }
+
   static RealType calculateF1Score(const RealType &precision,
                                    const RealType &recall) {
     return (2. * precision * recall) / (precision + recall);
@@ -66,6 +100,10 @@ public:
 
   RealType calculateF1Score() const {
     return calculateF1Score(calculatePrecision(), calculateRecall());
+  }
+
+  RealType calculateFbetaScore(RealType beta) const {
+    return calculateFBetaScore(calculatePrecision(), calculateRecall(), beta);
   }
 
   virtual void serializeJson(std::ostream &out) const override {
