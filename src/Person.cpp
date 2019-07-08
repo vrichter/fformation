@@ -60,9 +60,9 @@ double Person::calculateVisibilityCost(const Position2D &group_center,
     return 0.; // same person
   }
   if (group_center.x() == other.pose().position().x() &&
-      group_center.y() == other.pose().position().y()){
+      group_center.y() == other.pose().position().y()) {
     // center is created from only others position.
-    return  0.;
+    return 0.;
   }
   auto this_vector = group_center - pose().position();
   auto this_distance = this_vector.norm();
@@ -78,7 +78,8 @@ double Person::calculateVisibilityCost(const Position2D &group_center,
   }
   // exp(ln(k) * cos(\theta) * (d_i/d_j)) can be rearranged to k^(cos(\theta) *
   // (d_i/d_j))
-  double result = pow(100, cosinus_angle * (this_distance / other_distance));
+  double result =
+      pow(_ln_of_k, cosinus_angle * (this_distance / other_distance));
   return (result < max_visibility_constraint_cost)
              ? result
              : max_visibility_constraint_cost;
