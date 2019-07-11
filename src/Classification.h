@@ -93,7 +93,7 @@ public:
    * @return
    */
   double calculateCosts(const Observation &observation, Person::Stride stride,
-                        double mdl_prior) {
+                        double mdl_prior) const {
     return calculateDistanceCosts(observation, stride) +
            calculateMDLCosts(mdl_prior) +
            calculateVisibilityCosts(observation, stride);
