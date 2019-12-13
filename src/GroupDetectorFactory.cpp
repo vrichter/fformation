@@ -40,6 +40,9 @@ GroupDetectorFactory fillDefault() {
   fac.addDetector("shrink", [](const Options &opt) {
     return GroupDetector::Ptr(new fformation::GroupDetectorShrink(opt));
   });
+  fac.addDetector("shrink2", [](const Options &opt) {
+    return GroupDetector::Ptr(new fformation::GroupDetectorShrink2(opt));
+  });
   return fac;
 }
 

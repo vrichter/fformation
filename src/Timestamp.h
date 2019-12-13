@@ -38,6 +38,10 @@ public:
     return lhs._timestamp < rhs._timestamp;
   }
 
+  friend bool operator>(const Timestamp &lhs, const Timestamp &rhs) {
+    return lhs._timestamp > rhs._timestamp;
+  }
+
   bool equals(const Timestamp &other) const {
     return std::fabs(time() - other.time()) <
            std::numeric_limits<TimestampType>::epsilon();

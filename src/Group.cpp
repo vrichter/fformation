@@ -256,3 +256,11 @@ std::vector<Person> Group::generatePersonList() const {
   }
   return result;
 }
+
+fformation::IdGroup Group::generatIdGroup() const {
+  std::set<PersonId> persons;
+  for (auto p : _persons) {
+    persons.insert(p.first);
+  }
+  return IdGroup(persons);
+}

@@ -26,6 +26,8 @@
 
 namespace fformation {
 
+class IdGroup;
+
 class Group : public JsonSerializable {
 public:
   Group(
@@ -43,6 +45,8 @@ public:
   bool has_person(const PersonId id) const {
     return _persons.find(id) != _persons.end();
   }
+
+  IdGroup generatIdGroup() const;
 
   std::vector<Person> generatePersonList() const;
 

@@ -21,6 +21,12 @@
 #include <iomanip>
 #include <iostream>
 
+#if 0
+#define LOG(x)
+#else
+#define LOG(x) std::cerr << __FILE__ "[" << __LINE__ << "]: " << x
+#endif
+
 using fformation::Evaluation;
 using fformation::ConfusionMatrix;
 using fformation::Timestamp;
