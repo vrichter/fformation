@@ -181,7 +181,7 @@ public:
   void override(const Option &other);
 
   const bool hasOption(const Option::NameType &name) const;
-  const Option &getOption(const Option::NameType &name) const throw(Exception);
+  const Option &getOption(const Option::NameType &name) const;
   const Option getOptionOr(const Option::NameType &name, const Option::ValueType &value) const;
   template<typename T>
   bool addIfMissing(const std::string& name, T value){
@@ -208,7 +208,7 @@ public:
 
   static Options
   parseFromString(const std::string &options,
-                  const std::string &separator = "@") throw(Exception);
+                  const std::string &separator = "@");
 };
 
 } // namespace fformation

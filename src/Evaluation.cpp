@@ -20,6 +20,7 @@
 #include <assert.h>
 #include <iomanip>
 #include <iostream>
+#include <random>
 
 using fformation::Evaluation;
 using fformation::ConfusionMatrix;

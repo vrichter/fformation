@@ -93,8 +93,7 @@ const bool Options::hasOption(const Option::NameType &name) const {
   return this->find(name) != this->end();
 }
 
-const Option &Options::getOption(const Option::NameType &name) const
-    throw(Exception) {
+const Option &Options::getOption(const Option::NameType &name) const {
   auto it = this->find(name);
   if (it != this->end()) {
     return *it;
@@ -114,7 +113,7 @@ const Option Options::getOptionOr(const Option::NameType &name,
 
 Options
 Options::parseFromString(const std::string &options,
-                         const std::string &separator) throw(Exception) {
+                         const std::string &separator) {
   Options result;
   boost::char_separator<char> option_separator(separator.c_str());
   boost::tokenizer<boost::char_separator<char>> tokens(options,
