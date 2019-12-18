@@ -17,9 +17,9 @@
 
 #pragma once
 #include "Classification.h"
+#include "GroupDetector.h"
 #include "Observation.h"
 #include "Options.h"
-#include "GroupDetector.h"
 #include <memory>
 
 namespace fformation {
@@ -46,6 +46,15 @@ private:
   Person::Stride _stride;
 };
 
+class GroupDetectorShrink2 : public GroupDetector {
+public:
+  GroupDetectorShrink2(const Options &options);
 
+  virtual Classification detect(const Observation &observation) const final;
+
+private:
+  double _mdl;
+  Person::Stride _stride;
+};
 
 } // namespace fformation

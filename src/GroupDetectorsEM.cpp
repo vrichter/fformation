@@ -20,9 +20,56 @@
 #include <assert.h>
 #include <iostream>
 
+//#define PRINT_CALCULATIONS
+
+#ifndef PRINT_CALCULATIONS
+#define LOG(x)
+#else
+#define LOG(x) std::cerr << __FILE__ "[" << __LINE__ << "]: " << x
+#endif
+
+#ifndef PRINT_CALCULATIONS
+#define LOG_COSTS(x, old_sum, new_sum, old_cost_matrix, new_cost_matrix)
+#else
+#define LOG_COSTS(x, old_sum, new_sum, old_cost_matrix, new_cost_matrix)       \
+  LOG("COSTS:");                                                               \
+  std::cerr << x << ": ts: " << observation.timestamp()                        \
+            << " iteration: " << count << " old cost: " << old_sum             \
+            << " new cost: " << new_sum << "\n";                               \
+  std::cerr << "assignment: ";                                                 \
+  if (old_sum > new_sum) {                                                     \
+    std::cerr << "new\n";                                                      \
+  } else {                                                                     \
+    std::cerr << "old\n";                                                      \
+  }                                                                            \
+  auto classification =                                                        \
+      (old_sum > new_sum)                                                      \
+          ? createClassification(observation.timestamp(), persons,             \
+                                 findBestAssignment(new_cost_matrix))          \
+          : createClassification(observation.timestamp(), persons,             \
+                                 findBestAssignment(old_cost_matrix));         \
+  for (auto g : classification.createGroups(observation, true)) {              \
+    auto center = g.calculateCenter(_stride);                                  \
+    std::cerr << "    - " << g.calculateDistanceCosts(_stride) << "\n";        \
+    for (auto p : g.persons()) {                                               \
+      auto cost = p.second.calculateDistanceCosts(center, _stride);            \
+      double vcost = 0.;                                                       \
+      for (auto o : persons) {                                                 \
+        vcost += p.second.calculateVisibilityCost(center, o);                  \
+      }                                                                        \
+      std::cerr << "        - " << p.first << " - " << cost << " - " << vcost; \
+      if (cost > _mdl && new_sum >= old_sum) {                                 \
+        std::cerr << " single cost higher than mdl\n";                         \
+      } else {                                                                 \
+        std::cerr << "\n";                                                     \
+      }                                                                        \
+    }                                                                          \
+  }                                                                            \
+  std::cerr << std::endl;
+#endif
+
 using fformation::Observation;
 using fformation::Classification;
-using fformation::GroupDetectorGrow;
 namespace fv = fformation::validators;
 
 fformation::GroupDetectorGrow::GroupDetectorGrow(const Options &options)
@@ -154,7 +201,8 @@ static AssignmentCosts optimizeCenters(std::vector<Position2D> &centers,
   auto assign = calculateAssignmentCosts(persons, centers, stride);
   auto best_assign = findBestAssignment(assign);
   double costs = sumCosts(best_assign, 0.);
-  while (true) {
+  size_t count = 0;
+  while (++count) {
     // E
     auto new_centers = updateCenters(centers, persons, best_assign, stride);
     // M
@@ -206,7 +254,8 @@ fformation::GroupDetectorGrow::detect(const Observation &observation) const {
   AssignmentCosts costs;
   double sum_costs = std::numeric_limits<double>::max();
 
-  while (true) {
+  size_t count = 0;
+  while (++count) {
     // propose new center
     auto new_centers = proposeNewCenters(costs, centers, persons, _stride);
     // update centers through em
@@ -214,8 +263,9 @@ fformation::GroupDetectorGrow::detect(const Observation &observation) const {
     auto new_costs = optimizeCenters(new_centers, persons, _stride);
     // if sum_costs < previous
     double new_sum_costs = sumCosts(findBestAssignment(new_costs), _mdl);
+    LOG_COSTS("GROW", sum_costs, new_sum_costs, costs, new_costs);
     if (new_sum_costs < sum_costs) {
-      // // insert centers, assignment, sum into log
+      // insert centers, assignment, sum into log
       centers = new_centers;
       costs = new_costs;
       sum_costs = new_sum_costs;
@@ -299,7 +349,8 @@ fformation::GroupDetectorShrink::detect(const Observation &observation) const {
   AssignmentCosts costs;
   double sum_costs = std::numeric_limits<double>::max();
 
-  while (true) {
+  size_t count = 0;
+  while (++count) {
     // remove a group center
     auto new_centers = proposeLessCenters(costs, centers, persons, _stride);
     // update centers through em
@@ -307,12 +358,70 @@ fformation::GroupDetectorShrink::detect(const Observation &observation) const {
     auto new_costs = optimizeCenters(new_centers, persons, _stride);
     // if sum_costs < previous
     double new_sum_costs = sumCosts(findBestAssignment(new_costs), _mdl);
+    LOG_COSTS("SHRINK", sum_costs, new_sum_costs, costs, new_costs);
     if (new_sum_costs < sum_costs) {
-      // // insert centers, assignment, sum into log
+      // insert centers, assignment, sum into log
       centers = new_centers;
       costs = new_costs;
       sum_costs = new_sum_costs;
     } else {
+      break;
+    }
+  }
+  return createClassification(observation.timestamp(), persons,
+                              findBestAssignment(costs));
+}
+
+fformation::GroupDetectorShrink2::GroupDetectorShrink2(const Options &options)
+    : GroupDetector(options),
+      _mdl(options.getOption("mdl").validate(fv::Min<double>(0.))),
+      _stride(options.getOption("stride").validate(fv::Min<double>(0.))) {}
+
+Classification
+fformation::GroupDetectorShrink2::detect(const Observation &observation) const {
+  // edge case
+  if (observation.group().persons().size() < 2) {
+    OneGroupDetector det;
+    return det.detect(observation);
+  }
+
+  std::vector<Person> persons = observation.group().generatePersonList();
+  std::vector<Position2D> centers;
+  AssignmentCosts costs;
+  double sum_costs = std::numeric_limits<double>::max();
+
+  size_t count = 0;
+  while (++count) {
+    // remove a group center
+    auto new_centers = proposeLessCenters(costs, centers, persons, _stride);
+    // update centers through em
+    // calculate assignment costs, sum costs
+    auto new_costs = optimizeCenters(new_centers, persons, _stride);
+    // if sum_costs < previous
+    double new_sum_costs =
+        createClassification(observation.timestamp(), persons,
+                             findBestAssignment(new_costs))
+            .calculateCosts(observation, _stride, _mdl);
+    LOG_COSTS("SHRINK2", sum_costs, new_sum_costs, costs, new_costs);
+    if (new_sum_costs < sum_costs) {
+      // insert centers, assignment, sum into log
+      centers = new_centers;
+      costs = new_costs;
+      sum_costs = new_sum_costs;
+    } else {
+      Assignment worse = Assignment(0, 0, 0.);
+      auto best_assignment = findBestAssignment(costs);
+      for (auto it : findBestAssignment(costs)) {
+        if (it.second.costs > worse.costs) {
+          worse = it.second;
+        }
+      }
+      if (worse.costs > _mdl) {
+        LOG("Personal distance costs are higher than MDL. This may "
+            "happen when by removing a group not only the MDL cost is "
+            "decreased but the assignment of a person moves the group"
+            "center to a position with better overall visibility.");
+      }
       break;
     }
   }

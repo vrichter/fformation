@@ -80,6 +80,7 @@ double Person::calculateVisibilityCost(const Position2D &group_center,
   // (d_i/d_j))
   double result =
       pow(_ln_of_k, cosinus_angle * (this_distance / other_distance));
+  assert(result >= 0.);
   return (result < max_visibility_constraint_cost)
              ? result
              : max_visibility_constraint_cost;
